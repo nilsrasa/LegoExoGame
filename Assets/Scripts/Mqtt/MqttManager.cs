@@ -9,21 +9,13 @@ namespace Mqtt
 {
     public class MqttManager : MonoBehaviour
     {
-        public string directionFromMindstorms;
-        // Create some MQTT broker subscription
-
-        public float speed = 0.01f;
-        public float vertical = 0f;
-        public float horizontal = 0f;
         public string elbowValue, wristValue;
-        private float _elbowAngle, _wristAngle;
 
         private string _clientIp = "192.168.0.101";
         private string _elbowTopic = "motor_value_elbow";
         private string _wristTopic = "motor_value_wrist";
 
         private MqttClient _client;
-        private int elbowSpeed, wristSpeed;
 
         public System.Action<MqttEntry> OnElbowValue, OnWristValue;
 
@@ -49,6 +41,7 @@ namespace Mqtt
         void client_MqttMsgPublishReceived(object sender, MqttMsgPublishEventArgs e)
         {
             Debug.Log("Received = " + Encoding.UTF8.GetString(e.Message) + " on topic " + e.Topic);
+
             if (e.Topic == _elbowTopic)
             {
                 // Do anything with the value
@@ -56,24 +49,8 @@ namespace Mqtt
 
                 //Pass on the value to all event subscribers
                 OnElbowValue?.Invoke(MessageToEntry(elbowValue));
-
-                /*var newAngle = float.Parse(elbowValue.Split(',')[0]);
-
-                if (newAngle != _elbowAngle)
-                {
-                    horizontal = (newAngle > _elbowAngle) ? 1f : -1f;
-
-
-                    _elbowAngle = newAngle;
-                }
-                else
-                {
-                    horizontal = 0f;
-                }*/
-
-
             }
-            if (e.Topic == _wristTopic)
+            else if (e.Topic == _wristTopic)
             {
                 // Do anything with the value
                 wristValue = Encoding.UTF8.GetString(e.Message);
@@ -95,6 +72,11 @@ namespace Mqtt
             return _client.Publish(topic, Encoding.UTF8.GetBytes(msg));
         }
 
+        /// <summary>
+        /// Used to translate the recieved mqtt message into an MqqtEntry
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <returns></returns>
         private MqttEntry MessageToEntry(string msg)
         {
             var split = msg.Split(',');

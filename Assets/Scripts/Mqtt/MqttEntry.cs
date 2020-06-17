@@ -9,14 +9,22 @@ namespace Mqtt
     {
         public float Value { get; private set; }
         public string Timestamp { get; private set; }
-        public MqttEntry(float value, string timestamp)
+
+        public override string Header => "Timestamp, Angle";
+
+        public override string Id => _id;
+
+        private string _id;
+
+        public MqttEntry(string id, float value, string timestamp)
         {
+            _id = id;
             Value = value;
             Timestamp = timestamp;
         }
         public override string ToCSV()
         {
-            return $"\"{Value}\",\"{Timestamp}\"";
+            return $"\"{Timestamp}\",\"{Value}\"";
         }
 
         public override string ToText()

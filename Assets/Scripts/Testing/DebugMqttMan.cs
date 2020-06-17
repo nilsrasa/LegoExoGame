@@ -9,11 +9,22 @@ namespace Testing
     {
         public string elbowValue, wristValue;
 
-        public System.Action<MqttEntry> OnElbowValue, OnWristValue;
+        [SerializeField] private string _clientIp = "192.168.0.101";
+        [SerializeField] private string _elbowTopic = "motor_value_elbow";
+        [SerializeField] private string _wristTopic = "motor_value_wrist";
+        [SerializeField] private string _elbowCommand = "motor_command_elbow";
+        [SerializeField] private string _wristCommand = "motor_command_wrist";
 
-        void Start()
+        public event System.Action<MqttEntry> OnElbowValue, OnWristValue;
+
+        public void Connect()
         {
-            
+            Log("Connected");
+        }
+
+        public void Close()
+        {
+            Log("Closed");
         }
 
         public void ReceiveValue(float val, string time, bool isElbow)
@@ -28,9 +39,14 @@ namespace Testing
 
         public void SetMotorSpeed(int speed, bool isElbow)
         {
-            string topic = (isElbow) ? "motor_command_elbow" : "motor_command_wrist";
+            string topic = (isElbow) ? _elbowCommand : _wristCommand;
 
-            Debug.Log(topic + " speed: " + speed);
+            Log(topic + " speed: " + speed);
+        }
+
+        private void Log(string entry)
+        {
+            Debug.Log("MqttMan:: " + entry);
         }
     }
 }

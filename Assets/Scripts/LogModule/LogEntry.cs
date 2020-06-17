@@ -2,7 +2,8 @@
 {
     public abstract class LogEntry
     {
-        public string Header { get; protected set; }
+        public abstract string Header { get; }
+        public abstract string Id { get; }
         public abstract string ToCSV();
 
         public abstract string ToText();

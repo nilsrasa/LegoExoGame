@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 
 namespace LogModule
 {
@@ -7,9 +8,10 @@ namespace LogModule
         private string _path;
         private StreamWriter _writer;
         private int lines;
+        private Dictionary<string, LogStream> _streamLib;
 
 
-        public LogWriter(string path, string header)
+        public LogWriter(string path)
         {
             _path = path;
 
@@ -18,22 +20,57 @@ namespace LogModule
                 Directory.CreateDirectory(_path);
             }
 
-            _writer = new StreamWriter(path);
-            _writer.WriteLine(header);
+            _streamLib = new Dictionary<string, LogStream>();
         }
 
         public void LogEntry(LogEntry entry)
         {
-            _writer.WriteLine(entry.ToCSV());
-            lines++;
+            LogStream logStream;
+
+            if (!_streamLib.ContainsKey(entry.Id))
+            {
+                logStream = new LogStream(_path, "filename", entry.Header);
+                _streamLib.Add(entry.Id, logStream);
+            }
+            else
+                logStream = _streamLib[entry.Id];
+
+            logStream.WriteLine(entry.ToCSV());
         }
 
-        public void EndTask()
+        public void Close()
         {
-            _writer.Close();
+            //Close all the streams
+            foreach (LogStream logStream in _streamLib.Values)
+                logStream.Close();
 
-            if (lines < 1)
-                File.Delete(_path);
+            //Clear the library
+            _streamLib.Clear();
+        }
+
+        private class LogStream
+        {
+            private StreamWriter _writer;
+            private  int _lines;
+            private string _path;
+
+            public LogStream(string path, string filename, string header)
+            {
+                _path = path + filename + ".csv";
+                _writer = new StreamWriter(_path);
+                _writer.WriteLine(header);
+            }
+
+            public void WriteLine(string line)
+            {
+                _writer.WriteLine(line);
+                _lines++;
+            }
+
+            public void Close()
+            {
+                _writer.Close();
+            }
         }
     }
 }

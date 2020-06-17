@@ -11,15 +11,17 @@ namespace Mqtt
     {
         public string elbowValue, wristValue;
 
-        private string _clientIp = "192.168.0.101";
-        private string _elbowTopic = "motor_value_elbow";
-        private string _wristTopic = "motor_value_wrist";
+        [SerializeField] private string _clientIp = "192.168.0.101";
+        [SerializeField] private string _elbowTopic = "motor_value_elbow";
+        [SerializeField] private string _wristTopic = "motor_value_wrist";
+        [SerializeField] private string _elbowCommand = "motor_command_elbow";
+        [SerializeField] private string _wristCommand = "motor_command_wrist";
 
         private MqttClient _client;
+        
+        public event System.Action<MqttEntry> OnElbowValue, OnWristValue;
 
-        public System.Action<MqttEntry> OnElbowValue, OnWristValue;
-
-        void Start()
+        public void Connect()
         {
             _client = new MqttClient(_clientIp);
             byte code = _client.Connect("unity_program");
@@ -31,6 +33,14 @@ namespace Mqtt
 
             ushort subscribeId = _client.Subscribe(new string[] { _wristTopic, _elbowTopic },
                     new byte[] { MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE, MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE });
+        }
+
+        public void Close()
+        {
+            _client.MqttMsgPublished -= client_MqttMsgPublished;
+            _client.MqttMsgPublishReceived -= client_MqttMsgPublishReceived;
+            _client.Disconnect();
+            _client = null;
         }
 
         void client_MqttMsgPublished(object sender, MqttMsgPublishedEventArgs e)
@@ -48,7 +58,7 @@ namespace Mqtt
                 elbowValue = Encoding.UTF8.GetString(e.Message);
 
                 //Pass on the value to all event subscribers
-                OnElbowValue?.Invoke(MessageToEntry(elbowValue));
+                OnElbowValue?.Invoke(MessageToEntry(_elbowTopic, elbowValue));
             }
             else if (e.Topic == _wristTopic)
             {
@@ -56,13 +66,13 @@ namespace Mqtt
                 wristValue = Encoding.UTF8.GetString(e.Message);
 
                 //Pass on the value to all event subscribers
-                OnWristValue?.Invoke(MessageToEntry(wristValue));
+                OnWristValue?.Invoke(MessageToEntry(_wristTopic, wristValue));
             }
         }
 
         public void SetMotorSpeed(int speed, bool isElbow)
         {
-            string topic = (isElbow) ? "motor_command_elbow" : "motor_command_wrist";
+            string topic = (isElbow) ? _elbowCommand : _wristCommand;
 
             PublishMessage(speed.ToString(), topic);
         }
@@ -77,13 +87,18 @@ namespace Mqtt
         /// </summary>
         /// <param name="msg"></param>
         /// <returns></returns>
-        private MqttEntry MessageToEntry(string msg)
+        private MqttEntry MessageToEntry(string id, string msg)
         {
             var split = msg.Split(',');
             var value = float.Parse(split[0]);
             var time = split[1];
 
-            return new MqttEntry(value, time);
+            return new MqttEntry(id, value, time);
+        }
+
+        private void OnDestroy()
+        {
+            Close();
         }
     }
 }

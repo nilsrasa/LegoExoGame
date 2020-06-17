@@ -14,6 +14,8 @@ namespace Mqtt
 
         public override string Id => _id;
 
+        public override string Name => _id;
+
         private string _id;
 
         public MqttEntry(string id, float value, string timestamp)

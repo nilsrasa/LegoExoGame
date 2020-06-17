@@ -17,25 +17,29 @@ namespace Testing
 
         public event System.Action<MqttEntry> OnElbowValue, OnWristValue;
         private float _elbowValue, _wristValue;
-        private float moveAmount = 10f;
+        private float moveAmount = 6f;
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.A))
+            if (Input.GetKey(KeyCode.A))
             {
-                ReceiveValue(_wristValue - moveAmount, Time.time.ToString(), false);
+                _wristValue -= moveAmount;
+                ReceiveValue(_wristValue, Time.time.ToString(), false);
             }
-            else if (Input.GetKeyDown(KeyCode.D))
+            if (Input.GetKey(KeyCode.D))
             {
-                ReceiveValue(_wristValue + moveAmount, Time.time.ToString(), false);
+                _wristValue += moveAmount;
+                ReceiveValue(_wristValue, Time.time.ToString(), false);
             }
-            else if (Input.GetKeyDown(KeyCode.W))
+            if (Input.GetKey(KeyCode.W))
             {
-                ReceiveValue(_elbowValue + moveAmount, Time.time.ToString(), true);
+                _elbowValue += moveAmount;
+                ReceiveValue(_elbowValue, Time.time.ToString(), true);
             }
-            else if (Input.GetKeyDown(KeyCode.S))
+            if (Input.GetKey(KeyCode.S))
             {
-                ReceiveValue(_elbowValue - moveAmount, Time.time.ToString(), true);
+                _elbowValue -= moveAmount;
+                ReceiveValue(_elbowValue, Time.time.ToString(), true);
             }
         }
 
@@ -51,6 +55,7 @@ namespace Testing
 
         public void ReceiveValue(float val, string time, bool isElbow)
         {
+            Log("Received val: " + val + " at: " + time + " isElbow: " + isElbow);
 
             if (isElbow)
                 OnElbowValue?.Invoke(new MqttEntry("elbow", val, time));

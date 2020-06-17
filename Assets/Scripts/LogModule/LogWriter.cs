@@ -29,7 +29,7 @@ namespace LogModule
 
             if (!_streamLib.ContainsKey(entry.Id))
             {
-                logStream = new LogStream(_path, "filename", entry.Header);
+                logStream = new LogStream(_path, entry.Name, entry.Header);
                 _streamLib.Add(entry.Id, logStream);
             }
             else

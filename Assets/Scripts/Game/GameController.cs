@@ -67,7 +67,7 @@ namespace Game
             _mqttManager.Connect();
 
             //Init LogWriter
-            _logWriter = new LogWriter("path");
+            _logWriter = new LogWriter(Application.persistentDataPath + "\\Logs\\");
 
             //Start
             IsRunning = true;

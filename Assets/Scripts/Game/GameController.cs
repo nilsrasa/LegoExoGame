@@ -10,9 +10,11 @@ namespace Game
     public class GameController : MonoBehaviour
     {
         //GameUI
+        [SerializeField] private GameUI _gameUI;
         //InputMan
         //ObjectMan
-        //Game
+        [SerializeField] private ObjectManager _objectManager;
+        [SerializeField] private float _spawnInterval = 4f;
         //Patient
         //MqttMan
         [SerializeField] private DebugMqttMan _mqttManager;
@@ -35,12 +37,11 @@ namespace Game
             _mqttManager.OnElbowValue += OnElbowValue;
             _mqttManager.OnWristValue += OnWristValue;
 
-
-
+            //Initializing the object pool
+            _objectManager.Init(4);
 
         }
 
-        // Update is called once per frame
         void Update()
         {
             if (IsRunning)
@@ -51,17 +52,53 @@ namespace Game
                 _vertical = 0;
 
                 _hand.Translate(xSpeed, ySpeed, 0);
+
+                SpawnCount();
             }
         }
 
-        private void NewGame()
+        #region Game
+        private float _nextSpawn;
+        private const float _zStart = 10f;
+        private const float _square = 4f;
+        public void NewGame()
         {
             //Init MqttManager
             _mqttManager.Connect();
 
             //Init LogWriter
             _logWriter = new LogWriter("path");
+
+            //Start
+            IsRunning = true;
         }
+
+        public void PauseGame()
+        {
+
+        }
+
+        private void SpawnCount()
+        {
+            _nextSpawn -= Time.deltaTime;
+
+            if (_nextSpawn <= 0)
+            {
+                Spawn();
+                _nextSpawn = _spawnInterval;
+            }
+        }
+
+        private void Spawn()
+        {
+            //TODO: choose random spot
+            var pos = Vector3.forward * _zStart;
+            pos += Vector3.up * Random.Range(-_square, _square);
+            pos += Vector3.right * Random.Range(-_square, _square);
+
+            _objectManager.SpawnCube(pos, Quaternion.identity);
+        }
+        #endregion
 
         #region Mqtt
         private void OnElbowValue(MqttEntry entry)

@@ -18,39 +18,49 @@ namespace Testing
         public event System.Action<MqttEntry> OnElbowValue, OnWristValue;
         private float _elbowValue, _wristValue;
         private float moveAmount = 6f;
+        private bool isConnected;
+        
 
         private void Update()
         {
-            if (Input.GetKey(KeyCode.A))
+            if (isConnected)
             {
-                _wristValue -= moveAmount;
-                ReceiveValue(_wristValue, Time.time.ToString(), false);
-            }
-            if (Input.GetKey(KeyCode.D))
-            {
-                _wristValue += moveAmount;
-                ReceiveValue(_wristValue, Time.time.ToString(), false);
-            }
-            if (Input.GetKey(KeyCode.W))
-            {
-                _elbowValue += moveAmount;
-                ReceiveValue(_elbowValue, Time.time.ToString(), true);
-            }
-            if (Input.GetKey(KeyCode.S))
-            {
-                _elbowValue -= moveAmount;
-                ReceiveValue(_elbowValue, Time.time.ToString(), true);
+                /*if (Input.GetKey(KeyCode.A))
+                {
+                    _wristValue -= moveAmount;
+                    ReceiveValue(_wristValue, Time.time.ToString(), false);
+                }
+                if (Input.GetKey(KeyCode.D))
+                {
+                    _wristValue += moveAmount;
+                    ReceiveValue(_wristValue, Time.time.ToString(), false);
+                }
+                if (Input.GetKey(KeyCode.W))
+                {
+                    _elbowValue += moveAmount;
+                    ReceiveValue(_elbowValue, Time.time.ToString(), true);
+                }
+                if (Input.GetKey(KeyCode.S))
+                {
+                    _elbowValue -= moveAmount;
+                    ReceiveValue(_elbowValue, Time.time.ToString(), true);
+                }*/
+
+                ReceiveValue(Input.mousePosition.x, Time.time.ToString(), false);
+                ReceiveValue(Input.mousePosition.y, Time.time.ToString(), true);
             }
         }
 
         public void Connect()
         {
             Log("Connected");
+            isConnected = true;
         }
 
         public void Close()
         {
             Log("Closed");
+            isConnected = false;
         }
 
         public void ReceiveValue(float val, string time, bool isElbow)
@@ -72,7 +82,7 @@ namespace Testing
 
         private void Log(string entry)
         {
-            Debug.Log("MqttMan:: " + entry);
+            //Debug.Log("MqttMan:: " + entry);
         }
     }
 }

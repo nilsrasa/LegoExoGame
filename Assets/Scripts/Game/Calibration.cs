@@ -32,24 +32,37 @@ public class Calibration
 
     public float TranslateElbow (float angle)
     {
-        angle = Mathf.Clamp(angle, _minY, _maxY);
-        var middle = (_minY + _maxY) / 2f;
-        var range = _maxY - middle;
+        var percent = Percent(angle, _minY, _maxY);
+        var poly = Polynomial(percent);
+
+        return poly;
+    }
+
+    public float TranslateWrist(float angle)
+    {
+        var percent = Percent(angle, _minX, _maxX);
+        var poly = Polynomial(percent);
+
+        return poly;
+    }
+
+    private float Percent(float angle, float min, float max)
+    {
+        angle = Mathf.Clamp(angle, min, max);
+        var middle = (min + max) / 2f;
+        var range = max - middle;
         var dist = angle - middle;
         var pct = dist / range;
 
         return pct;
     }
 
-    public float TranslateWrist(float angle)
+    private float Polynomial(float pct)
     {
-        angle = Mathf.Clamp(angle, _minX, _maxX);
-        var middle = (_minX + _maxX) / 2f;
-        var range = _maxX - middle;
-        var dist = angle - middle;
-        var pct = dist / range;
+        var poly = (0.1f * Mathf.Pow(pct * 10, 2)) / 10;
+        poly = (pct >= 0) ? poly : -poly;
 
-        return pct;
+        return poly;
     }
 
 }

@@ -28,7 +28,7 @@ namespace Game
         {
 
 
-            //todo: do something cool
+            //todo: do something visually cool
         }
 
         private void SubstractScore(int points)

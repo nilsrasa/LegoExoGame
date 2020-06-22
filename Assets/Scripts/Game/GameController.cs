@@ -26,6 +26,7 @@ namespace Game
         [SerializeField] private Transform _hand;
         [SerializeField] private float _distanceFromMiddle = 1.5f;
         private Calibration _calibration;
+        private int _score;
 
         private LogWriter _logWriter;
 
@@ -40,6 +41,9 @@ namespace Game
             //Subscribing to the mqtt events
             _mqttManager.OnElbowValue += OnElbowValue;
             _mqttManager.OnWristValue += OnWristValue;
+
+            //Subscribing the Cube event
+            Cube.OnCollidedHand += OnCubeHit;
 
             //Initializing the object pool
             _objectManager.Init(4);
@@ -163,6 +167,12 @@ namespace Game
             var cube = _objectManager.SpawnCube(pos, rot);
             //cube.Direction = dir;
         }
+
+        private void OnCubeHit()
+        {
+            _score += Cube.points;
+            _gameUI.UpdateScoreTxt(_score, Cube.points);
+        }
         #endregion
 
         #region Mqtt
@@ -184,14 +194,6 @@ namespace Game
 
             //Log entry
             _logWriter.LogEntry(entry);
-        }
-
-        private void HandleAngleChange(float newAngle, ref float oldAngle, ref float side)
-        {
-            var dif = newAngle - oldAngle;
-            oldAngle = newAngle;
-
-            side += dif;
         }
         #endregion
     }

@@ -549,7 +549,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _gameUI: {fileID: 2050858040}
   _objectManager: {fileID: 1255838026}
-  _spawnInterval: 4
+  _spawnInterval: 6
   _mqttManager: {fileID: 225650084}
   _speed: 1
   _hand: {fileID: 1521622263}

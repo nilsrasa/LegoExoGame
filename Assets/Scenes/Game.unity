@@ -553,6 +553,7 @@ MonoBehaviour:
   _mqttManager: {fileID: 225650084}
   _speed: 1
   _hand: {fileID: 1521622263}
+  _distanceFromMiddle: 1.5
 --- !u!4 &777442032
 Transform:
   m_ObjectHideFlags: 0
@@ -800,7 +801,7 @@ GameObject:
   - component: {fileID: 1521622260}
   m_Layer: 0
   m_Name: Hand
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

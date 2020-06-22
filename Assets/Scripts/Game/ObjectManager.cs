@@ -18,12 +18,13 @@ namespace Game
             Cube.OnDisable += OnCubeDisabled;
         }
 
-        public void SpawnCube(Vector3 pos, Quaternion rot)
+        public Cube SpawnCube(Vector3 pos, Quaternion rot)
         {
-            if (_queue.Count > 0)
-                _queue.Dequeue().Reuse(pos, rot);
-            else
-                InstantiateCube().Reuse(pos, rot);
+            var cube = (_queue.Count > 0) ? _queue.Dequeue() : InstantiateCube();
+
+            cube.Reuse(pos, rot);
+
+            return cube;
         }
 
         private Cube InstantiateCube()

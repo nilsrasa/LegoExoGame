@@ -24,8 +24,11 @@ namespace Game
         private float _horizontal, _vertical;
         [SerializeField] private float _speed;
         [SerializeField] private Transform _hand;
+        [SerializeField] private float _distanceFromMiddle = 1.5f;
 
         private LogWriter _logWriter;
+
+        
 
         public bool IsRunning { get; private set; }
 
@@ -91,12 +94,33 @@ namespace Game
 
         private void Spawn()
         {
-            //TODO: choose random spot
             var pos = Vector3.forward * _zStart;
-            pos += Vector3.up * Random.Range(-_square, _square);
-            pos += Vector3.right * Random.Range(-_square, _square);
+            var dir = (CubeDirection)Random.Range(0, 4);
+            var rot = Quaternion.identity;
 
-            _objectManager.SpawnCube(pos, Quaternion.identity);
+            switch (dir)
+            {
+                case CubeDirection.Up:
+                    //rot = Quaternion.identity;
+                    pos += Vector3.up * _distanceFromMiddle;
+                    break;
+                case CubeDirection.Down:
+                    rot = Quaternion.Euler(0f, 0f, 180f);
+                    pos += Vector3.down * _distanceFromMiddle;
+                    break;
+                case CubeDirection.Left:
+                    rot = Quaternion.Euler(0f, 0f, 90f);
+                    pos += Vector3.left * _distanceFromMiddle;
+                    break;
+                case CubeDirection.Right:
+                    rot = Quaternion.Euler(0f, 0f, 270f);
+                    pos += Vector3.right * _distanceFromMiddle;
+                    break;
+            }
+
+
+            var cube = _objectManager.SpawnCube(pos, rot);
+            //cube.Direction = dir;
         }
         #endregion
 

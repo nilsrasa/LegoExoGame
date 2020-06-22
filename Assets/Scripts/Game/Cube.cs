@@ -11,6 +11,30 @@ namespace Game
         public static event System.Action<Cube> OnDisable;
 
         public new Rigidbody rigidbody;
+        private CubeDirection _direction;
+        public CubeDirection Direction { 
+            get { return _direction; }
+            set
+            {
+                _direction = value;
+
+                switch (value)
+                {
+                    case CubeDirection.Up:
+                        transform.localRotation = Quaternion.identity;
+                        break;
+                    case CubeDirection.Down:
+                        transform.localRotation = Quaternion.Euler(0f, 0f, 180f);
+                        break;
+                    case CubeDirection.Left:
+                        transform.localRotation = Quaternion.Euler(0f, 0f, 90f);
+                        break;
+                    case CubeDirection.Right:
+                        transform.localRotation = Quaternion.Euler(0f, 0f, 270f);
+                        break;
+                }
+            } 
+        }
 
         private void Awake()
         {
@@ -46,9 +70,18 @@ namespace Game
 
         private void OnCollisionEnter(Collision collision)
         {
-            //TODO: check
+            if (collision.collider.CompareTag("Player"))
+                OnCollidedHand?.Invoke();
 
             Disable();
         }
+    }
+
+    public enum CubeDirection
+    {
+        Up,
+        Down,
+        Left,
+        Right
     }
 }

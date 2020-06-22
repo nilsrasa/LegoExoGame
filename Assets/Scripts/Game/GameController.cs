@@ -25,6 +25,7 @@ namespace Game
         [SerializeField] private float _speed;
         [SerializeField] private Transform _hand;
         [SerializeField] private float _distanceFromMiddle = 1.5f;
+        private Calibration _calibration;
 
         private LogWriter _logWriter;
 
@@ -49,12 +50,12 @@ namespace Game
         {
             if (IsRunning)
             {
-                var xSpeed = _horizontal * _speed * Time.deltaTime;
+                /*var xSpeed = _horizontal * _speed * Time.deltaTime;
                 var ySpeed = _vertical * _speed * Time.deltaTime;
                 _horizontal = 0;
                 _vertical = 0;
 
-                _hand.Translate(xSpeed, ySpeed, 0);
+                _hand.Translate(xSpeed, ySpeed, 0);*/
 
                 SpawnCount();
             }
@@ -74,6 +75,13 @@ namespace Game
 
             //Start
             IsRunning = true;
+
+            //Calibration (TODO sequece)
+            _calibration = new Calibration();
+            _calibration.SetMaxElbow(128);
+            _calibration.SetMinElbow(-120);
+            _calibration.SetMaxWrist(70);
+            _calibration.SetMinWrist(-78);
         }
 
         public void PauseGame()
@@ -128,7 +136,12 @@ namespace Game
         private void OnElbowValue(MqttEntry entry)
         {
             //Handle value
-            HandleAngleChange(entry.Value, ref _elbowAngle, ref _vertical);
+            //HandleAngleChange(entry.Value, ref _elbowAngle, ref _vertical);
+
+            var pct = _calibration.TranslateElbow(entry.Value);
+            var pos = _hand.position;
+            pos.y = _distanceFromMiddle * pct;
+            _hand.position = pos;
 
             //Log entry
             _logWriter.LogEntry(entry);
@@ -137,7 +150,12 @@ namespace Game
         private void OnWristValue(MqttEntry entry)
         {
             //Handle value
-            HandleAngleChange(entry.Value, ref _wristAngle, ref _horizontal);
+            //HandleAngleChange(entry.Value, ref _wristAngle, ref _horizontal);
+
+            var pct = _calibration.TranslateWrist(entry.Value);
+            var pos = _hand.position;
+            pos.x = _distanceFromMiddle * pct;
+            _hand.position = pos;
 
             //Log entry
             _logWriter.LogEntry(entry);

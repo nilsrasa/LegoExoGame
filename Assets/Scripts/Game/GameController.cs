@@ -57,6 +57,14 @@ namespace Game
 
                 _hand.Translate(xSpeed, ySpeed, 0);*/
 
+                var pct = _calibration.TranslateElbow(_elbowAngle);
+                var pos = _hand.position;
+                pos.y = _distanceFromMiddle * pct;
+                pct = _calibration.TranslateWrist(_wristAngle);
+                pos.x = _distanceFromMiddle * pct;
+
+                _hand.position = pos;
+
                 SpawnCount();
             }
         }
@@ -74,14 +82,39 @@ namespace Game
             _logWriter = new LogWriter(Application.persistentDataPath + "\\Logs\\");
 
             //Start
-            IsRunning = true;
+            //IsRunning = true;
+            CalibrationSequence();
+        }
 
-            //Calibration (TODO sequece)
+        public void CalibrationSequence()
+        {
             _calibration = new Calibration();
-            _calibration.SetMaxElbow(128);
-            _calibration.SetMinElbow(-120);
-            _calibration.SetMaxWrist(70);
-            _calibration.SetMinWrist(-78);
+
+            StartCoroutine(Calibrate());
+        }
+
+        private IEnumerator Calibrate()
+        {
+            Debug.Log("Set min elbow");
+            yield return new WaitUntil(() => Input.GetKeyUp(KeyCode.Return));
+            _calibration.SetMinElbow(_elbowAngle);
+            yield return new WaitForSeconds(1f);
+
+            Debug.Log("Set max elbow");
+            yield return new WaitUntil(() => Input.GetKeyUp(KeyCode.Return));
+            _calibration.SetMaxElbow(_elbowAngle);
+            yield return new WaitForSeconds(1f);
+
+            Debug.Log("Set min wrist");
+            yield return new WaitUntil(() => Input.GetKeyUp(KeyCode.Return));
+            _calibration.SetMinWrist(_wristAngle);
+            yield return new WaitForSeconds(1f);
+
+            Debug.Log("Set max wrist");
+            yield return new WaitUntil(() => Input.GetKeyUp(KeyCode.Return));
+            _calibration.SetMaxWrist(_wristAngle);
+
+            IsRunning = true;
         }
 
         public void PauseGame()
@@ -137,11 +170,7 @@ namespace Game
         {
             //Handle value
             //HandleAngleChange(entry.Value, ref _elbowAngle, ref _vertical);
-
-            var pct = _calibration.TranslateElbow(entry.Value);
-            var pos = _hand.position;
-            pos.y = _distanceFromMiddle * pct;
-            _hand.position = pos;
+            _elbowAngle = entry.Value;
 
             //Log entry
             _logWriter.LogEntry(entry);
@@ -151,11 +180,7 @@ namespace Game
         {
             //Handle value
             //HandleAngleChange(entry.Value, ref _wristAngle, ref _horizontal);
-
-            var pct = _calibration.TranslateWrist(entry.Value);
-            var pos = _hand.position;
-            pos.x = _distanceFromMiddle * pct;
-            _hand.position = pos;
+            _wristAngle = entry.Value;
 
             //Log entry
             _logWriter.LogEntry(entry);

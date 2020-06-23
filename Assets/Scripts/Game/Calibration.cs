@@ -30,7 +30,7 @@ public class Calibration
         setup++;
     }
 
-    public float TranslateElbow (float angle)
+    public float ElbowPercent (float angle)
     {
         var percent = Percent(angle, _minY, _maxY);
         var poly = Polynomial(percent);
@@ -38,7 +38,7 @@ public class Calibration
         return poly;
     }
 
-    public float TranslateWrist(float angle)
+    public float WristPercent(float angle)
     {
         var percent = Percent(angle, _minX, _maxX);
         var poly = Polynomial(percent);

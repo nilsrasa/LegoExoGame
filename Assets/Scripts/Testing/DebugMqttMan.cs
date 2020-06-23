@@ -18,8 +18,8 @@ namespace Testing
         public event System.Action<MqttEntry> OnElbowValue, OnWristValue;
         private float _elbowValue, _wristValue;
         private float moveAmount = 6f;
-        private bool isConnected;
-        
+        public bool isConnected { get; private set; }
+
 
         private void Update()
         {

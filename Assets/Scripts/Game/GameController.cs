@@ -21,12 +21,14 @@ namespace Game
         private float _elbowAngle, _wristAngle;
 
         //Game
-        private float _horizontal, _vertical;
-        [SerializeField] private float _speed;
+        [SerializeField, Range(0.2f,5f)] private float _speed;
         [SerializeField] private Transform _hand;
         [SerializeField] private float _distanceFromMiddle = 1.5f;
-        private Calibration _calibration;
         private int _score;
+
+        //Calibration
+        [SerializeField] private CalibrationController _calibrationController;
+        private Calibration _calibration;
 
         private LogWriter _logWriter;
 
@@ -42,6 +44,13 @@ namespace Game
             _mqttManager.OnElbowValue += OnElbowValue;
             _mqttManager.OnWristValue += OnWristValue;
 
+            //Sub to calibration controller event
+            _calibrationController.OnCalibrationDone += OnCalibrationDone;
+
+            //Sub to gameUi events
+            GameUI.OnStartClick += NewGame;
+            GameUI.OnCountedDown += OnCountedDown;
+
             //Subscribing the Cube event
             Cube.OnCollidedHand += OnCubeHit;
 
@@ -54,17 +63,14 @@ namespace Game
         {
             if (IsRunning)
             {
-                /*var xSpeed = _horizontal * _speed * Time.deltaTime;
-                var ySpeed = _vertical * _speed * Time.deltaTime;
-                _horizontal = 0;
-                _vertical = 0;
+                //Set Difficulty
+                Cube.speed = _speed;
 
-                _hand.Translate(xSpeed, ySpeed, 0);*/
-
-                var pct = _calibration.TranslateElbow(_elbowAngle);
+                //Move the hand
+                var pct = _calibration.ElbowPercent(_elbowAngle);
                 var pos = _hand.position;
                 pos.y = _distanceFromMiddle * pct;
-                pct = _calibration.TranslateWrist(_wristAngle);
+                pct = _calibration.WristPercent(_wristAngle);
                 pos.x = _distanceFromMiddle * pct;
 
                 _hand.position = pos;
@@ -76,54 +82,43 @@ namespace Game
         #region Game
         private float _nextSpawn;
         private const float _zStart = 10f;
-        private const float _square = 4f;
         public void NewGame()
         {
-            //Init MqttManager
-            _mqttManager.Connect();
-
             //Init LogWriter
             _logWriter = new LogWriter(Application.persistentDataPath + "\\Logs\\");
 
-            //Start
-            //IsRunning = true;
-            CalibrationSequence();
+            //Init MqttManager
+            _mqttManager.Connect();
+
+            //Init calibration
+            _calibrationController.StartCalibration(_mqttManager);
+
         }
 
-        public void CalibrationSequence()
+        public void StartGame()
         {
-            _calibration = new Calibration();
-
-            StartCoroutine(Calibrate());
-        }
-
-        private IEnumerator Calibrate()
-        {
-            Debug.Log("Set min elbow");
-            yield return new WaitUntil(() => Input.GetKeyUp(KeyCode.Return));
-            _calibration.SetMinElbow(_elbowAngle);
-            yield return new WaitForSeconds(1f);
-
-            Debug.Log("Set max elbow");
-            yield return new WaitUntil(() => Input.GetKeyUp(KeyCode.Return));
-            _calibration.SetMaxElbow(_elbowAngle);
-            yield return new WaitForSeconds(1f);
-
-            Debug.Log("Set min wrist");
-            yield return new WaitUntil(() => Input.GetKeyUp(KeyCode.Return));
-            _calibration.SetMinWrist(_wristAngle);
-            yield return new WaitForSeconds(1f);
-
-            Debug.Log("Set max wrist");
-            yield return new WaitUntil(() => Input.GetKeyUp(KeyCode.Return));
-            _calibration.SetMaxWrist(_wristAngle);
-
             IsRunning = true;
+        }
+
+        private void OnCalibrationDone(Calibration calibration)
+        {
+            _calibration = calibration;
+            _gameUI.ShowCountdown(3);
+        }
+
+        private void OnCountedDown()
+        {
+            StartGame();
         }
 
         public void PauseGame()
         {
+            IsRunning = false;
+        }
 
+        public void ResumeGame()
+        {
+            IsRunning = true;
         }
 
         private void SpawnCount()
@@ -165,7 +160,6 @@ namespace Game
 
 
             var cube = _objectManager.SpawnCube(pos, rot);
-            //cube.Direction = dir;
         }
 
         private void OnCubeHit()
@@ -178,8 +172,7 @@ namespace Game
         #region Mqtt
         private void OnElbowValue(MqttEntry entry)
         {
-            //Handle value
-            //HandleAngleChange(entry.Value, ref _elbowAngle, ref _vertical);
+            //Save value
             _elbowAngle = entry.Value;
 
             //Log entry
@@ -188,8 +181,7 @@ namespace Game
 
         private void OnWristValue(MqttEntry entry)
         {
-            //Handle value
-            //HandleAngleChange(entry.Value, ref _wristAngle, ref _horizontal);
+            //Save value
             _wristAngle = entry.Value;
 
             //Log entry

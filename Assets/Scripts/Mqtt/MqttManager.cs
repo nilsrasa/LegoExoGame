@@ -18,6 +18,7 @@ namespace Mqtt
         [SerializeField] private string _wristCommand = "motor_command_wrist";
 
         private MqttClient _client;
+        public bool isConnected { get; private set; }
         
         public event System.Action<MqttEntry> OnElbowValue, OnWristValue;
 
@@ -33,6 +34,8 @@ namespace Mqtt
 
             ushort subscribeId = _client.Subscribe(new string[] { _wristTopic, _elbowTopic },
                     new byte[] { MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE, MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE });
+
+            isConnected = true;//TODO: should probably check that a connection was established
         }
 
         public void Close()
@@ -41,6 +44,8 @@ namespace Mqtt
             _client.MqttMsgPublishReceived -= client_MqttMsgPublishReceived;
             _client.Disconnect();
             _client = null;
+
+            isConnected = false;
         }
 
         void client_MqttMsgPublished(object sender, MqttMsgPublishedEventArgs e)

@@ -12,6 +12,7 @@ namespace Game
         public static event System.Action<Cube> OnDisable;
 
         public new Rigidbody rigidbody;
+        private Renderer renderer;
         private CubeDirection _direction;
         public CubeDirection Direction { 
             get { return _direction; }
@@ -23,15 +24,19 @@ namespace Game
                 {
                     case CubeDirection.Up:
                         transform.localRotation = Quaternion.identity;
+                        renderer.material.color = Color.yellow;
                         break;
                     case CubeDirection.Down:
                         transform.localRotation = Quaternion.Euler(0f, 0f, 180f);
+                        renderer.material.color = Color.blue;
                         break;
                     case CubeDirection.Left:
                         transform.localRotation = Quaternion.Euler(0f, 0f, 90f);
+                        renderer.material.color = Color.red;
                         break;
                     case CubeDirection.Right:
                         transform.localRotation = Quaternion.Euler(0f, 0f, 270f);
+                        renderer.material.color = Color.green;
                         break;
                 }
             } 
@@ -40,6 +45,7 @@ namespace Game
         private void Awake()
         {
             rigidbody = GetComponent<Rigidbody>();
+            renderer = GetComponent<MeshRenderer>();
         }
         void Update()
         {

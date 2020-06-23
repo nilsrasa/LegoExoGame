@@ -136,30 +136,26 @@ namespace Game
         {
             var pos = Vector3.forward * _zStart;
             var dir = (CubeDirection)Random.Range(0, 4);
-            var rot = Quaternion.identity;
 
             switch (dir)
             {
                 case CubeDirection.Up:
-                    //rot = Quaternion.identity;
                     pos += Vector3.up * _distanceFromMiddle;
                     break;
                 case CubeDirection.Down:
-                    rot = Quaternion.Euler(0f, 0f, 180f);
                     pos += Vector3.down * _distanceFromMiddle;
                     break;
                 case CubeDirection.Left:
-                    rot = Quaternion.Euler(0f, 0f, 90f);
                     pos += Vector3.left * _distanceFromMiddle;
                     break;
                 case CubeDirection.Right:
-                    rot = Quaternion.Euler(0f, 0f, 270f);
                     pos += Vector3.right * _distanceFromMiddle;
                     break;
             }
 
 
-            var cube = _objectManager.SpawnCube(pos, rot);
+            var cube = _objectManager.SpawnCube(pos, Quaternion.identity);
+            cube.Direction = dir;
         }
 
         private void OnCubeHit()

@@ -85,7 +85,9 @@ namespace Mqtt
         public void Nudge(NudgeDir dir)
         {
             //nudge_up.down.left.right
-            string topic = "nudge_" + dir.ToString();
+            string topic = "nudge";
+
+            PublishMessage(topic, dir.ToString());
         }
 
         private ushort PublishMessage(string msg, string topic)

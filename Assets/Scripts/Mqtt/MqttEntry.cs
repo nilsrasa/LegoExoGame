@@ -26,7 +26,7 @@ namespace Mqtt
             _id = id;
             Value = value;
             MqttTimestamp = timestamp;
-            UnityTimestamp = DateTime.Now.ToString("hh:mm:ss.ffff");
+            UnityTimestamp = DateTime.Now.ToString("HH:mm:ss.ffff");
         }
         public override string ToCSV()
         {

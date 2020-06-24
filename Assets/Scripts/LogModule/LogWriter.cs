@@ -6,8 +6,6 @@ namespace LogModule
     public class LogWriter
     {
         private string _path;
-        private StreamWriter _writer;
-        private int lines;
         private Dictionary<string, LogStream> _streamLib;
 
 

@@ -106,13 +106,18 @@ namespace Game
             }
         }
 
+        private void OnDestroy()
+        {
+            StopGame();
+        }
+
         #region Game
         private float _nextSpawn;
         private const float _zStart = 10f;
         public void NewGame()
         {
             //Init LogWriter
-            _logWriter = new LogWriter(Application.persistentDataPath + "\\Logs\\");
+            _logWriter = new LogWriter(Application.persistentDataPath + "\\Logs\\" + System.DateTime.Now.ToString("dd-MM-yyyy HH'h'mm'm'ss's'") + "\\");
 
             //Init MqttManager
             _mqttManager.Connect();
@@ -152,6 +157,13 @@ namespace Game
             IsRunning = true;
 
             _gameUI.HidePauseScreen();
+        }
+
+        public void StopGame()
+        {
+            IsRunning = false;
+            _mqttManager.Close();
+            _logWriter.Close();
         }
 
         private void SpawnCount()

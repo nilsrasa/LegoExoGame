@@ -682,7 +682,7 @@ MonoBehaviour:
   _objectManager: {fileID: 1255838026}
   _mqttManager: {fileID: 278721652}
   _hand: {fileID: 1521622263}
-  _nudgeTrigger: {fileID: 0}
+  _nudgeTrigger: {fileID: 611125019}
   _speed: 1
   _spawnSpacing: 4
   _distanceFromMiddle: 3.5

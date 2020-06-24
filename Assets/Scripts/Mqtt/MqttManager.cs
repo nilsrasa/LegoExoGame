@@ -90,7 +90,7 @@ namespace Mqtt
             PublishMessage(topic, dir.ToString());
         }
 
-        private ushort PublishMessage(string msg, string topic)
+        private ushort PublishMessage(string topic, string msg)
         {
             return _client.Publish(topic, Encoding.UTF8.GetBytes(msg));
         }

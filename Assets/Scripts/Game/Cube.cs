@@ -86,7 +86,7 @@ namespace Game
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.CompareTag("Nugder"))
+            if (other.CompareTag("Nudger"))
                 OnNugdeTrigger?.Invoke(_direction);
         }
     }

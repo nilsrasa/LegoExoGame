@@ -12,7 +12,7 @@ namespace Game
         public static event System.Action<Cube> OnDisable;
 
         public new Rigidbody rigidbody;
-        private Renderer renderer;
+        private new Renderer renderer;
         private CubeDirection _direction;
         public CubeDirection Direction { 
             get { return _direction; }

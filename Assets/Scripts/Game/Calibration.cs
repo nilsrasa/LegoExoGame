@@ -35,7 +35,7 @@ public class Calibration
         var percent = Percent(angle, _minY, _maxY);
         var poly = Polynomial(percent);
 
-        return poly;
+        return percent;
     }
 
     public float WristPercent(float angle)
@@ -43,7 +43,7 @@ public class Calibration
         var percent = Percent(angle, _minX, _maxX);
         var poly = Polynomial(percent);
 
-        return poly;
+        return percent;
     }
 
     private float Percent(float angle, float min, float max)

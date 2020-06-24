@@ -75,11 +75,17 @@ namespace Mqtt
             }
         }
 
-        public void SetMotorSpeed(int speed, bool isElbow)
+        /*public void SetMotorSpeed(int speed, bool isElbow)
         {
             string topic = (isElbow) ? _elbowCommand : _wristCommand;
 
             PublishMessage(speed.ToString(), topic);
+        }*/
+
+        public void Nudge(NudgeDir dir)
+        {
+            //nudge_up.down.left.right
+            string topic = "nudge_" + dir.ToString();
         }
 
         private ushort PublishMessage(string msg, string topic)
@@ -105,5 +111,13 @@ namespace Mqtt
         {
             Close();
         }
+    }
+
+    public enum NudgeDir
+    {
+        up,
+        down,
+        left,
+        right
     }
 }

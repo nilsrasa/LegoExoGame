@@ -1,4 +1,5 @@
 ﻿using LogModule;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,9 +9,11 @@ namespace Mqtt
     public class MqttEntry : LogEntry
     {
         public float Value { get; private set; }
-        public string Timestamp { get; private set; }
+        public string MqttTimestamp { get; private set; }
 
-        public override string Header => "Timestamp, Angle";
+        public string UnityTimestamp { get; private set; }
+
+        public override string Header => "Mqtt Timestamp, Unity Timestamp, Angle";
 
         public override string Id => _id;
 
@@ -22,16 +25,17 @@ namespace Mqtt
         {
             _id = id;
             Value = value;
-            Timestamp = timestamp;
+            MqttTimestamp = timestamp;
+            UnityTimestamp = DateTime.Now.ToString("hh:mm:ss.ffff");
         }
         public override string ToCSV()
         {
-            return $"\"{Timestamp}\",\"{Value}\"";
+            return $"\"{MqttTimestamp}\",\"{UnityTimestamp}\",\"{Value}\"";
         }
 
         public override string ToText()
         {
-            return $"Value: {Value}, TimeStamp: {Timestamp}";
+            return $"Value: {Value}, Mqtt TimeStamp: {MqttTimestamp}, Unity Timestamp: {UnityTimestamp}";
         }
     }
 }

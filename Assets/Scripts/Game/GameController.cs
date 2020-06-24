@@ -9,21 +9,25 @@ namespace Game
 {
     public class GameController : MonoBehaviour
     {
+        [Header("External")]
         //GameUI
         [SerializeField] private GameUI _gameUI;
-        //InputMan
         //ObjectMan
         [SerializeField] private ObjectManager _objectManager;
-        [SerializeField] private float _spawnInterval = 4f;
-        //Patient
+        
         //MqttMan
         [SerializeField] private MqttManager _mqttManager;
         private float _elbowAngle, _wristAngle;
 
         //Game
-        [SerializeField, Range(0.2f,5f)] private float _speed;
+        [Header("Game objects")]
         [SerializeField] private Transform _hand;
+        [SerializeField] private GameObject _nudgeTrigger;
+        [Header("Game Settings")]
+        [SerializeField, Range(0.2f,5f)] private float _speed;
+        [SerializeField] private float _spawnSpacing = 4f;
         [SerializeField] private float _distanceFromMiddle = 1.5f;
+        private float _spawnInterval;
         private int _score;
 
         //Calibration
@@ -53,6 +57,7 @@ namespace Game
 
             //Subscribing the Cube event
             Cube.OnCollidedHand += OnCubeHit;
+            Cube.OnNugdeTrigger += OnNudgeTrigger;
 
             //Initializing the object pool
             _objectManager.Init(4);
@@ -65,6 +70,11 @@ namespace Game
             {
                 //Set Difficulty
                 Cube.speed = _speed;
+                _spawnInterval = _spawnSpacing / _speed;
+                //Move the nudgetrigger accordingly
+                var nudgerPosition = _nudgeTrigger.transform.localPosition;
+                nudgerPosition.z = _spawnSpacing;
+                _nudgeTrigger.transform.localPosition = nudgerPosition;
 
                 //Move the hand
                 var pct = _calibration.ElbowPercent(_elbowAngle);
@@ -185,6 +195,29 @@ namespace Game
         {
             _score += Cube.points;
             _gameUI.UpdateScoreTxt(_score, Cube.points);
+        }
+
+        private void OnNudgeTrigger(CubeDirection dir)
+        {
+            //Unsafe
+            //_mqttManager.Nudge((NudgeDir)dir);
+
+            //Safe
+            switch (dir)
+            {
+                case CubeDirection.Up:
+                    _mqttManager.Nudge(NudgeDir.up);
+                    break;
+                case CubeDirection.Down:
+                    _mqttManager.Nudge(NudgeDir.down);
+                    break;
+                case CubeDirection.Left:
+                    _mqttManager.Nudge(NudgeDir.left);
+                    break;
+                case CubeDirection.Right:
+                    _mqttManager.Nudge(NudgeDir.right);
+                    break;
+            }
         }
         #endregion
 

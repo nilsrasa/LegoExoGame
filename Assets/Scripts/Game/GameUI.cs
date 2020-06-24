@@ -126,6 +126,18 @@ namespace Game
             UpdateUI();
         }
 
+        public void ShowPauseScreen()
+        {
+            _state = State.Pause;
+            UpdateUI();
+        }
+
+        public void HidePauseScreen()
+        {
+            _state = State.Game;
+            UpdateUI();
+        }
+
         #region Score
         private void AddScore(int points)
         {

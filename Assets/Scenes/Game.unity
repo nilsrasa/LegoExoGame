@@ -228,7 +228,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &225650084
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -414,7 +414,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &278721652
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -589,7 +589,7 @@ MonoBehaviour:
   _gameUI: {fileID: 2050858040}
   _objectManager: {fileID: 1255838026}
   _spawnInterval: 6
-  _mqttManager: {fileID: 225650084}
+  _mqttManager: {fileID: 278721652}
   _speed: 1
   _hand: {fileID: 1521622263}
   _distanceFromMiddle: 3.5

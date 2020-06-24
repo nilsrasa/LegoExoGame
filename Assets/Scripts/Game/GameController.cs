@@ -17,7 +17,7 @@ namespace Game
         [SerializeField] private float _spawnInterval = 4f;
         //Patient
         //MqttMan
-        [SerializeField] private DebugMqttMan _mqttManager;
+        [SerializeField] private MqttManager _mqttManager;
         private float _elbowAngle, _wristAngle;
 
         //Game
@@ -76,6 +76,23 @@ namespace Game
                 _hand.position = pos;
 
                 SpawnCount();
+
+                if (Input.GetKeyDown(KeyCode.P))
+                {
+                    PauseGame();
+                }
+            }
+            else
+            {
+                if(Time.timeScale == 0)//If paused. TODO: Might have to use a statemachine instead?
+                {
+                    if (Input.GetKeyDown(KeyCode.P))
+                        ResumeGame();
+                    else if (Input.GetKeyDown(KeyCode.Escape))
+                    {
+                        Application.Quit();
+                    }
+                }
             }
         }
 
@@ -113,12 +130,18 @@ namespace Game
 
         public void PauseGame()
         {
+            Time.timeScale = 0;
             IsRunning = false;
+
+            _gameUI.ShowPauseScreen();
         }
 
         public void ResumeGame()
         {
+            Time.timeScale = 1;
             IsRunning = true;
+
+            _gameUI.HidePauseScreen();
         }
 
         private void SpawnCount()

@@ -1,6 +1,4 @@
 ﻿using Mqtt;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Testing
@@ -82,7 +80,7 @@ namespace Testing
 
         private void Log(string entry)
         {
-            //Debug.Log("MqttMan:: " + entry);
+            Debug.Log("MqttMan:: " + entry);
         }
     }
 }

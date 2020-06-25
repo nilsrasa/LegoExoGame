@@ -1,8 +1,5 @@
 ﻿using LogModule;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 namespace Mqtt
 {
@@ -27,6 +24,14 @@ namespace Mqtt
             Value = value;
             MqttTimestamp = timestamp;
             UnityTimestamp = DateTime.Now.ToString("HH:mm:ss.ffff");
+        }
+
+        public MqttEntry(string id, float value, string mqtttime, string unitytime)
+        {
+            _id = id;
+            Value = value;
+            MqttTimestamp = mqtttime;
+            UnityTimestamp = unitytime;
         }
         public override string ToCSV()
         {

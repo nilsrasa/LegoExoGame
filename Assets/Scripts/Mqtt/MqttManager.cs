@@ -1,5 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
+using System.Diagnostics;
 using System.Text;
 using UnityEngine;
 using uPLibrary.Networking.M2Mqtt;
@@ -18,6 +18,9 @@ namespace Mqtt
         [SerializeField] private string _wristCommand = "motor_command_wrist";
 
         private MqttClient _client;
+        private Stopwatch _stopWatch;
+        private DateTime _time;
+        private bool _isFirstMessage = true;
         public bool isConnected { get; private set; }
         
         public event System.Action<MqttEntry> OnElbowValue, OnWristValue;
@@ -33,29 +36,32 @@ namespace Mqtt
             //ushort publishId = _client.Publish("unity_topic",Encoding.UTF8.GetBytes("test_message"));
 
             ushort subscribeId = _client.Subscribe(new string[] { _wristTopic, _elbowTopic },
-                    new byte[] { MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE, MqttMsgBase.QOS_LEVEL_AT_LEAST_ONCE });
+                    new byte[] { MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE });
 
             isConnected = true;//TODO: should probably check that a connection was established
         }
 
         public void Close()
         {
+            //FIxme: nullreference??
             _client.MqttMsgPublished -= client_MqttMsgPublished;
             _client.MqttMsgPublishReceived -= client_MqttMsgPublishReceived;
             _client.Disconnect();
             _client = null;
+
+            //Todo: reset datetime, stopwatch etc..
 
             isConnected = false;
         }
 
         void client_MqttMsgPublished(object sender, MqttMsgPublishedEventArgs e)
         {
-            Debug.Log("MessageId = " + e.MessageId + " Published = " + e.IsPublished);
+            //Debug.Log("MessageId = " + e.MessageId + " Published = " + e.IsPublished);
         }
 
         void client_MqttMsgPublishReceived(object sender, MqttMsgPublishEventArgs e)
         {
-            Debug.Log("Received = " + Encoding.UTF8.GetString(e.Message) + " on topic " + e.Topic);
+            //Debug.Log("Received = " + Encoding.UTF8.GetString(e.Message) + " on topic " + e.Topic);
 
             if (e.Topic == _elbowTopic)
             {
@@ -105,8 +111,27 @@ namespace Mqtt
             var split = msg.Split(',');
             var value = float.Parse(split[0]);
             var time = split[1];
+            string unitytime;
+            //unitytime = DateTime.Now.ToString("HH:mm:ss.ffff");
 
-            return new MqttEntry(id, value, time);
+            if (_isFirstMessage)
+            {
+                _isFirstMessage = false;
+                _time = DateTime.Parse(time);
+                _stopWatch = new Stopwatch();
+                _stopWatch.Start();
+                unitytime = _time.ToString("HH:mm:ss.ffff");
+            }
+            else
+            {
+                //_stopWatch.Stop();
+                unitytime = _time.AddMilliseconds(_stopWatch.ElapsedMilliseconds).ToString("HH:mm:ss.ffff");
+                //_stopWatch.Restart();
+            }
+
+            
+
+            return new MqttEntry(id, value, time, unitytime);
         }
 
         private void OnDestroy()

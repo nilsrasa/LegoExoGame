@@ -7,7 +7,7 @@ namespace Game
         public static float speed = 1f;
         public readonly static int points = 50;
         public static event System.Action OnCollidedHand;
-        public static event System.Action<CubeDirection> OnNugdeTrigger;
+        public static event System.Action<Cube> OnNugdeTrigger;
         public static event System.Action<Cube> OnDisable;
 
         public new Rigidbody rigidbody;
@@ -85,7 +85,7 @@ namespace Game
         private void OnTriggerEnter(Collider other)
         {
             if (other.CompareTag("Nudger"))
-                OnNugdeTrigger?.Invoke(_direction);
+                OnNugdeTrigger?.Invoke(this);
         }
     }
 

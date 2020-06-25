@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Globalization;
 using System.Text;
 using UnityEngine;
 using uPLibrary.Networking.M2Mqtt;
@@ -12,15 +12,14 @@ namespace Mqtt
         public string elbowValue, wristValue;
 
         [SerializeField] private string _clientIp = "192.168.0.101";
+        [SerializeField] private string _dateTimeTopic = "time";
+        [SerializeField] private string _nudgeTopic = "nudge";
         [SerializeField] private string _elbowTopic = "motor_value_elbow";
         [SerializeField] private string _wristTopic = "motor_value_wrist";
         [SerializeField] private string _elbowCommand = "motor_command_elbow";
         [SerializeField] private string _wristCommand = "motor_command_wrist";
 
         private MqttClient _client;
-        private Stopwatch _stopWatch;
-        private DateTime _time;
-        private bool _isFirstMessage = true;
         public bool isConnected { get; private set; }
         
         public event System.Action<MqttEntry> OnElbowValue, OnWristValue;
@@ -33,12 +32,15 @@ namespace Mqtt
             _client.MqttMsgPublished += client_MqttMsgPublished;
             _client.MqttMsgPublishReceived += client_MqttMsgPublishReceived;
 
-            //ushort publishId = _client.Publish("unity_topic",Encoding.UTF8.GetBytes("test_message"));
+            //Send the current machine time to sync up
+            ushort publishId = _client.Publish(_dateTimeTopic, Encoding.UTF8.GetBytes($"\"{DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss.ffffff", CultureInfo.InvariantCulture)}\""));
 
             ushort subscribeId = _client.Subscribe(new string[] { _wristTopic, _elbowTopic },
                     new byte[] { MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE });
 
             isConnected = true;//TODO: should probably check that a connection was established
+
+            
         }
 
         public void Close()
@@ -90,10 +92,7 @@ namespace Mqtt
 
         public void Nudge(NudgeDir dir)
         {
-            //nudge_up.down.left.right
-            string topic = "nudge";
-
-            PublishMessage(topic, dir.ToString());
+            PublishMessage(_nudgeTopic, dir.ToString());
         }
 
         private ushort PublishMessage(string topic, string msg)
@@ -110,28 +109,10 @@ namespace Mqtt
         {
             var split = msg.Split(',');
             var value = float.Parse(split[0]);
-            var time = split[1];
-            string unitytime;
-            //unitytime = DateTime.Now.ToString("HH:mm:ss.ffff");
+            var mqtttime = split[1];
+            var unitytime = DateTime.Now.ToString("HH:mm:ss.ffffff");
 
-            if (_isFirstMessage)
-            {
-                _isFirstMessage = false;
-                _time = DateTime.Parse(time);
-                _stopWatch = new Stopwatch();
-                _stopWatch.Start();
-                unitytime = _time.ToString("HH:mm:ss.ffff");
-            }
-            else
-            {
-                //_stopWatch.Stop();
-                unitytime = _time.AddMilliseconds(_stopWatch.ElapsedMilliseconds).ToString("HH:mm:ss.ffff");
-                //_stopWatch.Restart();
-            }
-
-            
-
-            return new MqttEntry(id, value, time, unitytime);
+            return new MqttEntry(id, value, mqtttime, unitytime);
         }
 
         private void OnDestroy()

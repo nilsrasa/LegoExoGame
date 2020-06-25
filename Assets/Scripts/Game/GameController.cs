@@ -70,7 +70,7 @@ namespace Game
                 _spawnInterval = _spawnSpacing / _speed;
                 //Move the nudgetrigger accordingly
                 var nudgerPosition = _nudgeTrigger.transform.localPosition;
-                nudgerPosition.z = _spawnSpacing;
+                nudgerPosition.z = _spawnSpacing * .40f;
                 _nudgeTrigger.transform.localPosition = nudgerPosition;
 
                 //Move the hand
@@ -206,13 +206,10 @@ namespace Game
             _gameUI.UpdateScoreTxt(_score, Cube.points);
         }
 
-        private void OnNudgeTrigger(CubeDirection dir)
+        private void OnNudgeTrigger(Cube cube)
         {
-            //Unsafe
-            //_mqttManager.Nudge((NudgeDir)dir);
 
-            //Safe
-            switch (dir)
+            switch (cube.Direction)
             {
                 case CubeDirection.Up:
                     _mqttManager.Nudge(NudgeDir.up);

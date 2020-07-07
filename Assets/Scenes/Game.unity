@@ -429,7 +429,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elbowValue: 
   wristValue: 
-  _clientIp: 192.168.0.100
+  _clientIp: 192.168.0.102
   _dateTimeTopic: time
   _nudgeTopic: nudge
   _elbowTopic: motor_value_elbow

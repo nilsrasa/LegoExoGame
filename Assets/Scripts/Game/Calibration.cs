@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
-
+/// <summary>
+/// Represents a 2-axis calibration.
+/// </summary>
 public class Calibration
 {
     private float _maxY, _minY, _maxX, _minX;
@@ -28,22 +30,39 @@ public class Calibration
         setup++;
     }
 
+    /// <summary>
+    /// Returns the percent value of the given angle inside the calibrated min and max angles.
+    /// </summary>
+    /// <param name="angle">The current angle</param>
+    /// <returns>Percentage</returns>
     public float ElbowPercent (float angle)
     {
         var percent = Percent(angle, _minY, _maxY);
-        var poly = Polynomial(percent);
+        //var poly = Polynomial(percent);
 
         return percent;
     }
 
+    /// <summary>
+    /// Returns the percent value of the given angle inside the calibrated min and max angles.
+    /// </summary>
+    /// <param name="angle">The current angle</param>
+    /// <returns>Percentage</returns>
     public float WristPercent(float angle)
     {
         var percent = Percent(angle, _minX, _maxX);
-        var poly = Polynomial(percent);
+        //var poly = Polynomial(percent);
 
         return percent;
     }
 
+    /// <summary>
+    /// USed to calculate the percent value of the given angle between the given min and max values.
+    /// </summary>
+    /// <param name="angle">Current angle</param>
+    /// <param name="min">Min angle</param>
+    /// <param name="max">Max angle</param>
+    /// <returns>Percentage</returns>
     private float Percent(float angle, float min, float max)
     {
         angle = Mathf.Clamp(angle, min, max);

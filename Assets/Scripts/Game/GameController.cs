@@ -73,7 +73,7 @@ namespace Game
                 nudgerPosition.z = _spawnSpacing * .40f;
                 _nudgeTrigger.transform.localPosition = nudgerPosition;
 
-                //Move the hand
+                //Move the ball(_hand) according to exo angles
                 var pct = _calibration.ElbowPercent(_elbowAngle);
                 var pos = _hand.position;
                 pos.y = _distanceFromMiddle * pct;
@@ -124,22 +124,35 @@ namespace Game
 
         }
 
+        /// <summary>
+        /// Called to start the gamecontroller
+        /// </summary>
         public void StartGame()
         {
             IsRunning = true;
         }
 
+        /// <summary>
+        /// Call this when the calibration is done.
+        /// </summary>
+        /// <param name="calibration">The calibration object created during calibration</param>
         private void OnCalibrationDone(Calibration calibration)
         {
             _calibration = calibration;
             _gameUI.ShowCountdown(3);
         }
 
+        /// <summary>
+        /// When the count down is done.
+        /// </summary>
         private void OnCountedDown()
         {
             StartGame();
         }
 
+        /// <summary>
+        /// Used to pause the gamecontroller.
+        /// </summary>
         public void PauseGame()
         {
             Time.timeScale = 0;
@@ -148,6 +161,9 @@ namespace Game
             _gameUI.ShowPauseScreen();
         }
 
+        /// <summary>
+        /// Used to resume the gamecontroller
+        /// </summary>
         public void ResumeGame()
         {
             Time.timeScale = 1;
@@ -156,6 +172,10 @@ namespace Game
             _gameUI.HidePauseScreen();
         }
 
+        /// <summary>
+        /// Used to stop the gamecontroller.
+        /// Here everything is closed down.
+        /// </summary>
         public void StopGame()
         {
             IsRunning = false;
@@ -163,6 +183,9 @@ namespace Game
             _logWriter.Close();
         }
 
+        /// <summary>
+        /// The spawn counter, called each Update().
+        /// </summary>
         private void SpawnCount()
         {
             _nextSpawn -= Time.deltaTime;
@@ -174,6 +197,10 @@ namespace Game
             }
         }
 
+        /// <summary>
+        /// Called when a cube needs to spawn.
+        /// The direction is randomized here.
+        /// </summary>
         private void Spawn()
         {
             var pos = Vector3.forward * _zStart;
@@ -200,12 +227,19 @@ namespace Game
             cube.Direction = dir;
         }
 
+        /// <summary>
+        /// Called when the player hits a cube.
+        /// </summary>
         private void OnCubeHit()
         {
             _score += Cube.points;
             _gameUI.UpdateScoreTxt(_score, Cube.points);
         }
 
+        /// <summary>
+        /// Called to send a nudge to the player
+        /// </summary>
+        /// <param name="cube"></param>
         private void OnNudgeTrigger(Cube cube)
         {
 

@@ -2,6 +2,9 @@
 
 namespace Game
 {
+    /// <summary>
+    /// Game cube, those you want to hit.
+    /// </summary>
     public class Cube : MonoBehaviour
     {
         public static float speed = 1f;
@@ -51,6 +54,10 @@ namespace Game
             transform.Translate(Vector3.back * speed * Time.deltaTime);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="parent"></param>
         public void Init(Transform parent)
         {
             transform.SetParent(parent);

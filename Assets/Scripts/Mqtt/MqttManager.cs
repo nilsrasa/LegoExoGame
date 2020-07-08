@@ -29,12 +29,14 @@ namespace Mqtt
             _client = new MqttClient(_clientIp);
             byte code = _client.Connect("unity_program");
 
+            //Subscribe to the mqtt events
             _client.MqttMsgPublished += client_MqttMsgPublished;
             _client.MqttMsgPublishReceived += client_MqttMsgPublishReceived;
 
-            //Send the current machine time to sync up
+            //Send the current machine time to sync up with the exo
             ushort publishId = _client.Publish(_dateTimeTopic, Encoding.UTF8.GetBytes($"\"{DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss.ffffff", CultureInfo.InvariantCulture)}\""));
 
+            //Subscribe to the exo's wrist and elbow messages
             ushort subscribeId = _client.Subscribe(new string[] { _wristTopic, _elbowTopic },
                     new byte[] { MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE, MqttMsgBase.QOS_LEVEL_AT_MOST_ONCE });
 

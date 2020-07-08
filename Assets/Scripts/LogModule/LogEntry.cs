@@ -1,5 +1,8 @@
 ﻿namespace LogModule
 {
+    /// <summary>
+    /// Standard log entry model
+    /// </summary>
     public abstract class LogEntry
     {
         public abstract string Header { get; }

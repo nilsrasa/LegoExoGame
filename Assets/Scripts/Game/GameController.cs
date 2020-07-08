@@ -54,7 +54,7 @@ namespace Game
 
             //Subscribing the Cube event
             Cube.OnCollidedHand += OnCubeHit;
-            Cube.OnNugdeTrigger += OnNudgeTrigger;
+            Cube.OnNudgeTrigger += OnNudgeTrigger;
 
             //Initializing the object pool
             _objectManager.Init(4);

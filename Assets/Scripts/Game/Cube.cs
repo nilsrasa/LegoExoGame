@@ -10,7 +10,7 @@ namespace Game
         public static float speed = 1f;
         public readonly static int points = 50;
         public static event System.Action OnCollidedHand;
-        public static event System.Action<Cube> OnNugdeTrigger;
+        public static event System.Action<Cube> OnNudgeTrigger;
         public static event System.Action<Cube> OnDisable;
 
         public new Rigidbody rigidbody;
@@ -22,6 +22,7 @@ namespace Game
             {
                 _direction = value;
 
+                //The set direction defines the rotation and color of the cube
                 switch (value)
                 {
                     case CubeDirection.Up:
@@ -55,9 +56,9 @@ namespace Game
         }
 
         /// <summary>
-        /// 
+        /// Call this the first time you've instantiated the Cube.
         /// </summary>
-        /// <param name="parent"></param>
+        /// <param name="parent">The transform parent to be assigned</param>
         public void Init(Transform parent)
         {
             transform.SetParent(parent);
@@ -65,7 +66,11 @@ namespace Game
             transform.rotation = Quaternion.identity;
             gameObject.SetActive(false);
         }
-
+        /// <summary>
+        /// Call this to reuse the cube with the specified postion and rotation
+        /// </summary>
+        /// <param name="pos">The world position of the cube</param>
+        /// <param name="rot">The world rotation of the cube</param>
         public void Reuse(Vector3 pos, Quaternion rot)
         {
             gameObject.SetActive(true);
@@ -74,7 +79,9 @@ namespace Game
             transform.position = pos;
             transform.rotation = rot;
         }
-
+        /// <summary>
+        /// Call this to disable the cube
+        /// </summary>
         public void Disable()
         {
             OnDisable?.Invoke(this);
@@ -83,16 +90,19 @@ namespace Game
 
         private void OnCollisionEnter(Collision collision)
         {
+            //If we collide with the player, we invoke the OnCollidedHand event.
             if (collision.collider.CompareTag("Player"))
                 OnCollidedHand?.Invoke();
 
+            //Any collisions disables the cube
             Disable();
         }
 
         private void OnTriggerEnter(Collider other)
         {
+            //If enter a nudge trigger, we invoke the OnNudgeTrigger event.
             if (other.CompareTag("Nudger"))
-                OnNugdeTrigger?.Invoke(this);
+                OnNudgeTrigger?.Invoke(this);
         }
     }
 

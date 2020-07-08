@@ -58,12 +58,13 @@ namespace Game
             _state = State.Menu;
             UpdateUI();
 
-
+            //Bind the start button with StartGame().
             _startBtn.onClick.AddListener(StartGame);
         }
 
         private void Update()
         {
+            //Whenever the state is Counting, count the time
             if (_state == State.Counting)
             {
                 _countTime -= Time.deltaTime;
@@ -83,7 +84,10 @@ namespace Game
                 }
             }
         }
-
+        /// <summary>
+        /// Call this to start a countdown
+        /// </summary>
+        /// <param name="count">The starting count, excluding "Start"</param>
         public void ShowCountdown(int count)
         {
             _count = count + 1;
@@ -91,7 +95,9 @@ namespace Game
             UpdateUI();
         }
 
-
+        /// <summary>
+        /// Makes sure the right panels are visible depending on the State.
+        /// </summary>
         private void UpdateUI()
         {
             _gamePanel.gameObject.SetActive(_state == State.Game);
@@ -147,6 +153,11 @@ namespace Game
 
         }
 
+        /// <summary>
+        /// Call this to update the score text on the GUI
+        /// </summary>
+        /// <param name="score">The current score</param>
+        /// <param name="points">The amount of points the score changed by</param>
         public void UpdateScoreTxt(int score, int points)
         {
             _scoreTxt.text = string.Format(SCORE, score);

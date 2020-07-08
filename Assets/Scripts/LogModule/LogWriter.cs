@@ -3,6 +3,9 @@ using System.IO;
 
 namespace LogModule
 {
+    /// <summary>
+    /// Used to handle multiple log streams and log the entries
+    /// </summary>
     public class LogWriter
     {
         private string _path;
@@ -21,6 +24,10 @@ namespace LogModule
             _streamLib = new Dictionary<string, LogStream>();
         }
 
+        /// <summary>
+        /// Logs the given logentry using the corresponding stream. If no exists yet, a new stream is created.
+        /// </summary>
+        /// <param name="entry">The logentry to be logged</param>
         public void LogEntry(LogEntry entry)
         {
             LogStream logStream;

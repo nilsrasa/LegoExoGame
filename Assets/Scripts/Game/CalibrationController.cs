@@ -16,41 +16,39 @@ public class CalibrationController : MonoBehaviour
 
     public void StartCalibration(MqttManager mqttManager)
     {
+        //Subscribing to the mqttManager events
         _mqttManager = mqttManager;
         _mqttManager.OnElbowValue += OnElbowValue;
         _mqttManager.OnWristValue += OnWristValue;
 
-
+        //Instantiating a new Calibration object
         _calibration = new Calibration();
 
+        //Start the calibration coroutine
         StartCoroutine(Calibrate());
     }
 
     private IEnumerator Calibrate()
     {
-        GameUI.Instance.ShowInstructions("Move your arm to it's lowest position");
+        //Set the minimum angle values
+        GameUI.Instance.ShowInstructions("Strech your arm with your palm facing down.");
         yield return new WaitUntil(() => Input.GetKeyUp(KeyCode.Return));
         _calibration.SetMinElbow(_elbowAngle);
-        yield return new WaitForSeconds(.2f);
-
-        GameUI.Instance.ShowInstructions("Move your arm to it's highest position");
-        yield return new WaitUntil(() => Input.GetKeyUp(KeyCode.Return));
-        _calibration.SetMaxElbow(_elbowAngle);
-        yield return new WaitForSeconds(.2f);
-
-        GameUI.Instance.ShowInstructions("Turn your wrist to the left");
-        yield return new WaitUntil(() => Input.GetKeyUp(KeyCode.Return));
         _calibration.SetMinWrist(_wristAngle);
         yield return new WaitForSeconds(.2f);
-
-        GameUI.Instance.ShowInstructions("Turn your wrist to the right");
+        
+        //Set the maximum angle values
+        GameUI.Instance.ShowInstructions("Bend your arm with your palm facing behind you.");
         yield return new WaitUntil(() => Input.GetKeyUp(KeyCode.Return));
+        _calibration.SetMaxElbow(_elbowAngle);
         _calibration.SetMaxWrist(_wristAngle);
-
+        
+        //Clear GUI and invoke the event
         GameUI.Instance.ClearInstructions();
         OnCalibrationDone?.Invoke(_calibration);
     }
 
+    #region MQTT
     private void OnElbowValue(MqttEntry entry)
     {
         _elbowAngle = entry.Value;
@@ -60,4 +58,5 @@ public class CalibrationController : MonoBehaviour
     {
         _wristAngle = entry.Value;
     }
+    #endregion
 }

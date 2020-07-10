@@ -1,6 +1,8 @@
 ﻿using LogModule;
 using Mqtt;
+using Testing;
 using UnityEngine;
+using UnityEngine.XR;
 
 namespace Game
 {
@@ -13,7 +15,7 @@ namespace Game
         [SerializeField] private ObjectManager _objectManager;
         
         //MqttMan
-        [SerializeField] private MqttManager _mqttManager;
+        [SerializeField] private DebugMqttMan _mqttManager;
         private float _elbowAngle, _wristAngle;
 
         //Game
@@ -242,11 +244,44 @@ namespace Game
         /// <param name="cube"></param>
         private void OnNudgeTrigger(Cube cube)
         {
+            //Getting the ball x and y coordinates on grid where 0 is left down corner
+            var hor = _hand.position.x + _distanceFromMiddle;
+            var ver = _hand.position.y + _distanceFromMiddle;
+            //Same with the cube x and y
+            var cubeH = cube.transform.position.x + _distanceFromMiddle;
+            var cubeV = cube.transform.position.y + _distanceFromMiddle;
+            //Calculating the distance between the ball and the cube
+            var distH = Mathf.Abs(hor - cubeH);
+            var distV = Mathf.Abs(ver - cubeV);
+            var triggerDist = _distanceFromMiddle * .4f;
+            //If the distance is over the threshold
+            if (distH > triggerDist)
+            {
+                //if the cube is on the right
+                if(cubeH > _distanceFromMiddle)
+                    _mqttManager.Nudge(NudgeDir.right);
+                //if the cube is on the left
+                else
+                    _mqttManager.Nudge(NudgeDir.left);
+            }
+            //If the distance is over the threshold
+            if (distV > triggerDist)
+            {
+                //if the cube is on the top
+                if(cubeV > _distanceFromMiddle)
+                    _mqttManager.Nudge(NudgeDir.up);
+                //if the cube is on the bottom
+                else
+                    _mqttManager.Nudge(NudgeDir.down);
+            }
 
-            switch (cube.Direction)
+            Debug.Log("Nudge was determined from distH:" + distH + " distV:" + distV + " cubeDir:" + cube.Direction.ToString());
+            
+            /*switch (cube.Direction)
             {
                 case CubeDirection.Up:
-                    _mqttManager.Nudge(NudgeDir.up);
+                    if (distV >= triggerDist)
+                        _mqttManager.Nudge(NudgeDir.up);
                     break;
                 case CubeDirection.Down:
                     _mqttManager.Nudge(NudgeDir.down);
@@ -257,7 +292,7 @@ namespace Game
                 case CubeDirection.Right:
                     _mqttManager.Nudge(NudgeDir.right);
                     break;
-            }
+            }*/
         }
         #endregion
 

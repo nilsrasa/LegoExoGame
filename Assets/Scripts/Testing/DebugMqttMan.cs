@@ -66,9 +66,15 @@ namespace Testing
             Log("Received val: " + val + " at: " + time + " isElbow: " + isElbow);
 
             if (isElbow)
+            {
+                elbowValue = val.ToString();
                 OnElbowValue?.Invoke(new MqttEntry("elbow", val, time));
+            }
             else
+            {
+                wristValue = val.ToString();
                 OnWristValue?.Invoke(new MqttEntry("wrist", val, time));
+            }
         }
 
         public void SetMotorSpeed(int speed, bool isElbow)
@@ -76,6 +82,11 @@ namespace Testing
             string topic = (isElbow) ? _elbowCommand : _wristCommand;
 
             Log(topic + " speed: " + speed);
+        }
+
+        public void Nudge(NudgeDir dir)
+        {
+            Log("nudging to the " + dir.ToString());
         }
 
         private void Log(string entry)

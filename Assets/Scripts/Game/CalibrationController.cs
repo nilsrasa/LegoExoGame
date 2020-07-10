@@ -8,13 +8,13 @@ using UnityEngine;
 public class CalibrationController : MonoBehaviour
 {
     private Calibration _calibration;
-    private MqttManager _mqttManager;
+    private DebugMqttMan _mqttManager;
     private float _elbowAngle;
     private float _wristAngle;
 
     public event System.Action<Calibration> OnCalibrationDone;
 
-    public void StartCalibration(MqttManager mqttManager)
+    public void StartCalibration(DebugMqttMan mqttManager)
     {
         //Subscribing to the mqttManager events
         _mqttManager = mqttManager;

@@ -14,7 +14,6 @@ public class Grid : MonoBehaviour
         BuildLane((int)depth, _topLane, Vector3.up * (width + .5f));
         BuildLane((int)depth, _bottomLane, Vector3.down * (width + .5f));
 
-
     }
 
     private void BuildLane(int n, GameObject lane, Vector3 pos)
@@ -23,14 +22,15 @@ public class Grid : MonoBehaviour
         parent.SetParent(transform);
         parent.localPosition = pos;
 
-        lane.transform.SetParent(parent);
-        lane.transform.localPosition = Vector3.forward * .5f;
-
-        for (int i = 1; i<n; i++)
+        for (int i = 0; i<n; i++)
         {
             var newLane = GameObject.Instantiate(lane, parent);
             newLane.transform.localPosition = Vector3.forward * (i + .5f);
         }
+
+        lane.transform.SetParent(parent);
+        lane.transform.localPosition = Vector3.forward * -.5f;
+        lane.GetComponent<MeshRenderer>().material.SetColor("_Color", Color.red);
     }
 
     // Start is called before the first frame update

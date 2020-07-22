@@ -8,12 +8,29 @@ public class Grid : MonoBehaviour
 
     public void Init(float width, float depth)
     {
-        _rightLane.transform.localPosition = Vector3.right * width;
-        _leftLane.transform.localPosition = Vector3.left * width;
-        _topLane.transform.localPosition = Vector3.up * width;
-        _bottomLane.transform.localPosition = Vector3.down * width;
+        //Placing the lanes
+        BuildLane((int)depth, _rightLane, Vector3.right * (width + .5f));
+        BuildLane((int)depth, _leftLane, Vector3.left * (width + .5f));
+        BuildLane((int)depth, _topLane, Vector3.up * (width + .5f));
+        BuildLane((int)depth, _bottomLane, Vector3.down * (width + .5f));
 
 
+    }
+
+    private void BuildLane(int n, GameObject lane, Vector3 pos)
+    {
+        var parent = new GameObject(lane.name).transform;
+        parent.SetParent(transform);
+        parent.localPosition = pos;
+
+        lane.transform.SetParent(parent);
+        lane.transform.localPosition = Vector3.forward * .5f;
+
+        for (int i = 1; i<n; i++)
+        {
+            var newLane = GameObject.Instantiate(lane, parent);
+            newLane.transform.localPosition = Vector3.forward * (i + .5f);
+        }
     }
 
     // Start is called before the first frame update

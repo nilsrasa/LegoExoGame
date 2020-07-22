@@ -22,6 +22,7 @@ namespace Game
         [Header("Game objects")]
         [SerializeField] private Transform _hand;
         [SerializeField] private GameObject _nudgeTrigger;
+        [SerializeField] private Grid _grid;
         [Header("Game Settings")]
         [SerializeField, Range(0.2f,5f)] private float _speed;
         [SerializeField] private float _spawnSpacing = 4f;
@@ -60,6 +61,9 @@ namespace Game
 
             //Initializing the object pool
             _objectManager.Init(4);
+
+            //Initializing the grid
+            _grid.Init(_distanceFromMiddle, _zStart);
 
         }
 

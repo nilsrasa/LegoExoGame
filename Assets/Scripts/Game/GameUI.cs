@@ -33,6 +33,9 @@ namespace Game
         [Header("Instruction Panel")]
         [SerializeField] private RectTransform _instructionPanel;
         [SerializeField] private TextMeshProUGUI _instructionText;
+        [Header("Game Over Panel")]
+        [SerializeField] private RectTransform _gameoverPanel;
+        [SerializeField] private TextMeshProUGUI _gameoverText;
 
         //Counting
         private int _count;
@@ -49,7 +52,8 @@ namespace Game
             Game,
             Pause,
             Counting,
-            Instructions
+            Instructions,
+            GameOver
         }
         private State _state;
 
@@ -105,6 +109,7 @@ namespace Game
             _mainPanel.gameObject.SetActive(_state == State.Menu);
             _countPanel.gameObject.SetActive(_state == State.Counting);
             _instructionPanel.gameObject.SetActive(_state == State.Instructions);
+            _gameoverPanel.gameObject.SetActive(_state == State.GameOver);
         }
 
         private void StartGame()
@@ -137,6 +142,12 @@ namespace Game
         public void HidePauseScreen()
         {
             _state = State.Game;
+            UpdateUI();
+        }
+
+        public void ShowGameOverScreen()
+        {
+            _state = State.GameOver;
             UpdateUI();
         }
 

@@ -9,7 +9,9 @@ namespace Game
     {
         public static float speed = 1f;
         public readonly static int points = 50;
+        public readonly static int penalty = 25;
         public static event System.Action OnCollidedHand;
+        public static event System.Action OnCollided;
         public static event System.Action<Cube> OnNudgeTrigger;
         public static event System.Action<Cube> OnDisable;
 
@@ -93,6 +95,8 @@ namespace Game
             //If we collide with the player, we invoke the OnCollidedHand event.
             if (collision.collider.CompareTag("Player"))
                 OnCollidedHand?.Invoke();
+            else
+                OnCollided?.Invoke();
 
             //Any collisions disables the cube
             Disable();

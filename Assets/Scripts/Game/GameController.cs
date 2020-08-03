@@ -1,5 +1,6 @@
 ﻿using LogModule;
 using Mqtt;
+using System.Xml.Serialization;
 using Testing;
 using UnityEngine;
 using UnityEngine.XR;
@@ -27,6 +28,9 @@ namespace Game
         [SerializeField, Range(0.2f,5f)] private float _speed;
         [SerializeField] private float _spawnSpacing = 4f;
         [SerializeField] private float _distanceFromMiddle = 1.5f;
+        [SerializeField] private int _cubeCount = 25;
+        private int _spawnedCubes;
+        private int _hits, _misses;
         private float _spawnInterval;
         private int _score;
 
@@ -56,8 +60,10 @@ namespace Game
             GameUI.OnCountedDown += OnCountedDown;
 
             //Subscribing the Cube event
-            Cube.OnCollidedHand += OnCubeHit;
+            Cube.OnCollidedHand += OnCubeHitHand;
             Cube.OnNudgeTrigger += OnNudgeTrigger;
+            Cube.OnCollided += OnCubeHit;
+            Cube.OnDisable += OnCubeDisabled;
 
             //Initializing the object pool
             _objectManager.Init(4);
@@ -179,6 +185,16 @@ namespace Game
         }
 
         /// <summary>
+        /// when the game is over
+        /// </summary>
+        public void GameOver()
+        {
+            IsRunning = false;
+
+            _gameUI.ShowGameOverScreen();
+        }
+
+        /// <summary>
         /// Used to stop the gamecontroller.
         /// Here everything is closed down.
         /// </summary>
@@ -196,7 +212,7 @@ namespace Game
         {
             _nextSpawn -= Time.deltaTime;
 
-            if (_nextSpawn <= 0)
+            if (_nextSpawn <= 0 && _spawnedCubes < _cubeCount)
             {
                 Spawn();
                 _nextSpawn = _spawnInterval;
@@ -231,15 +247,39 @@ namespace Game
 
             var cube = _objectManager.SpawnCube(pos, Quaternion.identity);
             cube.Direction = dir;
+            _spawnedCubes++;
         }
 
         /// <summary>
         /// Called when the player hits a cube.
         /// </summary>
-        private void OnCubeHit()
+        private void OnCubeHitHand()
         {
+            _hits++;
             _score += Cube.points;
             _gameUI.UpdateScoreTxt(_score, Cube.points);
+        }
+
+        /// <summary>
+        /// Called when the cube hits anything else but the player hand.
+        /// </summary>
+        private void OnCubeHit()
+        {
+            _misses++;
+            _score -= Cube.penalty;
+            _gameUI.UpdateScoreTxt(_score, -Cube.penalty);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cube"></param>
+        private void OnCubeDisabled(Cube cube)
+        {
+            if (_spawnedCubes == _cubeCount)
+            {
+                GameOver();
+            }
         }
 
         /// <summary>

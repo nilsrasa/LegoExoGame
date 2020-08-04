@@ -1,9 +1,7 @@
 ﻿using LogModule;
 using Mqtt;
-using System.Xml.Serialization;
 using Testing;
 using UnityEngine;
-using UnityEngine.XR;
 
 namespace Game
 {
@@ -194,6 +192,10 @@ namespace Game
         {
             IsRunning = false;
 
+            //Log Result
+            _logWriter.LogEntry(new GameEntry(_score, _hits, _misses));
+
+            //Update UI
             _gameUI.ShowGameOverScreen(_hits, _misses, _score);
         }
 

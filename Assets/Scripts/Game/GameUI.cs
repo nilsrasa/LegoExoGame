@@ -24,7 +24,10 @@ namespace Game
         private const string SCORE = "Score: {0}";
         [Header("Main Menu Panel")]
         [SerializeField] private RectTransform _mainPanel;
-        [SerializeField] private Button _startBtn;
+        [SerializeField] private Button _startBtn, _settingsBtn;
+        [Header("Settings Menu Panel")]
+        [SerializeField] private RectTransform _settingsPanel;
+        [SerializeField] private Button _Btn;
         [Header("Pause Panel")]
         [SerializeField] private RectTransform _pausePanel;
         [Header("Count Panel")]

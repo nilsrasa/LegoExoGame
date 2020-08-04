@@ -64,8 +64,13 @@ namespace Game
             _state = State.Menu;
             UpdateUI();
 
-            //Bind the start button with StartGame().
+            //Binding the buttons
             _startBtn.onClick.AddListener(StartGame);
+            _goNewBtn.onClick.AddListener(() => {
+                _state = State.Menu;
+                UpdateUI();
+            });
+            _goRestartBtn.onClick.AddListener(RestartGame);
         }
 
         private void Update()
@@ -120,6 +125,14 @@ namespace Game
             UpdateUI();
 
             OnStartClick?.Invoke();
+        }
+
+        private void RestartGame()
+        {
+            _state = State.Game;
+            UpdateUI();
+
+            OnRestartClick?.Invoke();
         }
 
         public void ShowInstructions(string msg)
@@ -183,7 +196,7 @@ namespace Game
             {
                 AddScore(points);
             }
-            else //If we're substracting
+            else if (points < 0) //If we're substracting
             {
                 SubstractScore(points);
             }

@@ -57,6 +57,7 @@ namespace Game
 
             //Sub to gameUi events
             GameUI.OnStartClick += NewGame;
+            GameUI.OnRestartClick += RestartGame;
             GameUI.OnCountedDown += OnCountedDown;
 
             //Subscribing the Cube event
@@ -125,6 +126,8 @@ namespace Game
         private const float _zStart = 10f;
         public void NewGame()
         {
+            ResetVars();
+
             //Init LogWriter
             _logWriter = new LogWriter(Application.persistentDataPath + "\\Logs\\" + System.DateTime.Now.ToString("dd-MM-yyyy HH'h'mm'm'ss's'") + "\\");
 
@@ -196,14 +199,19 @@ namespace Game
 
         public void RestartGame()
         {
-            //Resetting the private variables
+            ResetVars();
+
+            _gameUI.ShowCountdown(3);
+        }
+
+        private void ResetVars()
+        {
             _spawnedCubes = 0;
             _destroyedCubes = 0;
             _hits = 0;
             _misses = 0;
             _score = 0;
-
-            _gameUI.ShowCountdown(3);
+            _gameUI.UpdateScoreTxt(_score, 0);
         }
 
         /// <summary>

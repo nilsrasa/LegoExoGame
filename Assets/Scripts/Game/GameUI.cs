@@ -35,7 +35,9 @@ namespace Game
         [SerializeField] private TextMeshProUGUI _instructionText;
         [Header("Game Over Panel")]
         [SerializeField] private RectTransform _gameoverPanel;
-        [SerializeField] private TextMeshProUGUI _gameoverText;
+        [SerializeField] private TextMeshProUGUI _goScoreText, _goHitText, _goMissText;
+        [SerializeField] private Button _goRestartBtn, _goNewBtn;
+        private const string HIT = "Cubes hit: {0}", MISS = "Cubes missed: {0}";
 
         //Counting
         private int _count;
@@ -43,7 +45,7 @@ namespace Game
         private const float COUNT_INTERVAL = 1f;
         public static event System.Action OnCountedDown;
 
-        public static event System.Action OnStartClick;
+        public static event System.Action OnStartClick, OnRestartClick, OnNewClick;
         
 
         private enum State
@@ -145,8 +147,12 @@ namespace Game
             UpdateUI();
         }
 
-        public void ShowGameOverScreen()
+        public void ShowGameOverScreen(int hit, int miss, int score)
         {
+            _goHitText.text = string.Format(HIT, hit);
+            _goMissText.text = string.Format(MISS, miss);
+            _goScoreText.text = string.Format(SCORE, score);
+
             _state = State.GameOver;
             UpdateUI();
         }

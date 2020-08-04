@@ -29,7 +29,7 @@ namespace Game
         [SerializeField] private float _spawnSpacing = 4f;
         [SerializeField] private float _distanceFromMiddle = 1.5f;
         [SerializeField] private int _cubeCount = 25;
-        private int _spawnedCubes;
+        private int _spawnedCubes, _destroyedCubes;
         private int _hits, _misses;
         private float _spawnInterval;
         private int _score;
@@ -191,7 +191,19 @@ namespace Game
         {
             IsRunning = false;
 
-            _gameUI.ShowGameOverScreen();
+            _gameUI.ShowGameOverScreen(_hits, _misses, _score);
+        }
+
+        public void RestartGame()
+        {
+            //Resetting the private variables
+            _spawnedCubes = 0;
+            _destroyedCubes = 0;
+            _hits = 0;
+            _misses = 0;
+            _score = 0;
+
+            _gameUI.ShowCountdown(3);
         }
 
         /// <summary>
@@ -271,12 +283,13 @@ namespace Game
         }
 
         /// <summary>
-        /// 
+        /// Called whenever a cube is disabled (hit or missed).
         /// </summary>
         /// <param name="cube"></param>
         private void OnCubeDisabled(Cube cube)
         {
-            if (_spawnedCubes == _cubeCount)
+            _destroyedCubes++;
+            if (_destroyedCubes == _spawnedCubes)
             {
                 GameOver();
             }

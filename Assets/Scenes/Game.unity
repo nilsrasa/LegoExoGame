@@ -875,6 +875,7 @@ MonoBehaviour:
   _speed: 1
   _spawnSpacing: 4
   _distanceFromMiddle: 3.5
+  _cubeCount: 25
   _calibrationController: {fileID: 381029475}
 --- !u!4 &777442032
 Transform:
@@ -1473,11 +1474,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: GUI
       objectReference: {fileID: 0}
-    - target: {fileID: 1015947335982049428, guid: f534018417911fd4f8b03bdd6484d7d7,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 1015947335982049439, guid: f534018417911fd4f8b03bdd6484d7d7,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1581,31 +1577,6 @@ PrefabInstance:
     - target: {fileID: 1015947335982049439, guid: f534018417911fd4f8b03bdd6484d7d7,
         type: 3}
       propertyPath: m_Pivot.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 987385468703992963, guid: f534018417911fd4f8b03bdd6484d7d7,
-        type: 3}
-      propertyPath: m_textInfo.characterCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 987385468703992963, guid: f534018417911fd4f8b03bdd6484d7d7,
-        type: 3}
-      propertyPath: m_textInfo.spaceCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 987385468703992963, guid: f534018417911fd4f8b03bdd6484d7d7,
-        type: 3}
-      propertyPath: m_textInfo.wordCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 987385468703992963, guid: f534018417911fd4f8b03bdd6484d7d7,
-        type: 3}
-      propertyPath: m_textInfo.lineCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 987385468703992963, guid: f534018417911fd4f8b03bdd6484d7d7,
-        type: 3}
-      propertyPath: m_textInfo.pageCount
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

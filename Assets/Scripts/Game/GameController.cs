@@ -7,6 +7,8 @@ namespace Game
 {
     public class GameController : MonoBehaviour
     {
+        public static GameSettings gameSettings;
+
         [Header("External")]
         //GameUI
         [SerializeField] private GameUI _gameUI;
@@ -46,6 +48,9 @@ namespace Game
         // Start is called before the first frame update
         void Start()
         {
+            //Instantiating the GameSettings
+            gameSettings = new GameSettings();
+
             //Subscribing to the mqtt events
             _mqttManager.OnElbowValue += OnElbowValue;
             _mqttManager.OnWristValue += OnWristValue;
@@ -130,10 +135,17 @@ namespace Game
             _logWriter = new LogWriter(Application.persistentDataPath + "\\Logs\\" + System.DateTime.Now.ToString("dd-MM-yyyy HH'h'mm'm'ss's'") + "\\");
 
             //Init MqttManager
-            _mqttManager.Connect();
+            _mqttManager.Connect(gameSettings.ClientIp);
 
             //Init calibration
             _calibrationController.StartCalibration(_mqttManager);
+
+
+            //Apply game settings
+            _speed = gameSettings.GameSpeed;
+            _spawnSpacing = gameSettings.CubeSpacing;
+            _distanceFromMiddle = gameSettings.DistFromMiddle;
+            _cubeCount = gameSettings.CubeCount;
 
         }
 

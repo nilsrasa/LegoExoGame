@@ -49,9 +49,9 @@ namespace Testing
             }
         }
 
-        public void Connect()
+        public void Connect(string clientIp)
         {
-            Log("Connected");
+            Log("Connected to ip: "+clientIp);
             isConnected = true;
         }
 

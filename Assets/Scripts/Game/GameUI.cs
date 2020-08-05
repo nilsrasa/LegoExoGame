@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using System.IO;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -27,7 +28,9 @@ namespace Game
         [SerializeField] private Button _startBtn, _settingsBtn;
         [Header("Settings Menu Panel")]
         [SerializeField] private RectTransform _settingsPanel;
-        [SerializeField] private Button _Btn;
+        [SerializeField] private Button _resetBtn, _saveBtn;
+        [SerializeField] private TMP_InputField _clientIpInput;
+        [SerializeField] private TMP_Dropdown _gameDifDrop;
         [Header("Pause Panel")]
         [SerializeField] private RectTransform _pausePanel;
         [Header("Count Panel")]
@@ -58,7 +61,8 @@ namespace Game
             Pause,
             Counting,
             Instructions,
-            GameOver
+            GameOver,
+            Settings
         }
         private State _state;
 
@@ -74,6 +78,18 @@ namespace Game
                 UpdateUI();
             });
             _goRestartBtn.onClick.AddListener(RestartGame);
+            _settingsBtn.onClick.AddListener(() =>
+            {
+                ApplySettings(GameController.gameSettings);
+                _state = State.Settings;
+                UpdateUI();
+            });
+            _resetBtn.onClick.AddListener(ResetSettings);
+            _saveBtn.onClick.AddListener(SaveSettings);
+
+            //Binding settings UI elelments
+            _clientIpInput.onEndEdit.AddListener(OnClientInputChanged);
+            _gameDifDrop.onValueChanged.AddListener(OnDifDropChanged);
         }
 
         private void Update()
@@ -120,6 +136,7 @@ namespace Game
             _countPanel.gameObject.SetActive(_state == State.Counting);
             _instructionPanel.gameObject.SetActive(_state == State.Instructions);
             _gameoverPanel.gameObject.SetActive(_state == State.GameOver);
+            _settingsPanel.gameObject.SetActive(_state == State.Settings);
         }
 
         private void StartGame()
@@ -172,6 +189,37 @@ namespace Game
             _state = State.GameOver;
             UpdateUI();
         }
+
+        #region Settings
+        public void ApplySettings(GameSettings settings)
+        {
+            _clientIpInput.text = settings.ClientIp;
+            _gameDifDrop.value = (int)settings.GameDif;
+        }
+
+        private void ResetSettings()
+        {
+            
+        }
+
+        private void SaveSettings()
+        {
+            GameController.gameSettings.SaveChanges();
+            _state = State.Menu;
+            UpdateUI();
+        }
+
+        private void OnClientInputChanged(string input)
+        {
+            GameController.gameSettings.SetClientIp(input);
+        }
+
+        private void OnDifDropChanged(int val)
+        {
+            GameController.gameSettings.SetDifficulty(val);
+        }
+
+        #endregion
 
         #region Score
         private void AddScore(int points)

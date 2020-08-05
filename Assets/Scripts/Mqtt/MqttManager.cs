@@ -24,9 +24,9 @@ namespace Mqtt
         
         public event System.Action<MqttEntry> OnElbowValue, OnWristValue;
 
-        public void Connect()
+        public void Connect(string clientIp)
         {
-            _client = new MqttClient(_clientIp);
+            _client = new MqttClient(clientIp);
             byte code = _client.Connect("unity_program");
 
             //Subscribe to the mqtt events

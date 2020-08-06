@@ -70,6 +70,7 @@ namespace Game
             }
 
             GameDif = difficulty;
+            PlayerPrefs.SetInt(GAMEDIF, (int)GameDif);
         }
 
         public void SetClientIp(string ip)

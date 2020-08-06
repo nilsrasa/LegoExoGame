@@ -80,9 +80,9 @@ namespace Game
             _goRestartBtn.onClick.AddListener(RestartGame);
             _settingsBtn.onClick.AddListener(() =>
             {
-                ApplySettings(GameController.gameSettings);
                 _state = State.Settings;
                 UpdateUI();
+                ApplySettings(GameController.gameSettings);
             });
             _resetBtn.onClick.AddListener(ResetSettings);
             _saveBtn.onClick.AddListener(SaveSettings);
@@ -195,6 +195,7 @@ namespace Game
         {
             _clientIpInput.text = settings.ClientIp;
             _gameDifDrop.value = (int)settings.GameDif;
+            //_gameDifDrop.RefreshShownValue();
         }
 
         private void ResetSettings()

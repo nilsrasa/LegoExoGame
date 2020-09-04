@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Testing
 {
-    public class DebugMqttMan : MonoBehaviour
+    public class DebugMqttMan : GameMqttClient
     {
         public string elbowValue, wristValue;
 
@@ -13,7 +13,6 @@ namespace Testing
         [SerializeField] private string _elbowCommand = "motor_command_elbow";
         [SerializeField] private string _wristCommand = "motor_command_wrist";
 
-        public event System.Action<MqttEntry> OnElbowValue, OnWristValue;
         private float _elbowValue, _wristValue;
         private float moveAmount = 6f;
         public bool isConnected { get; private set; }
@@ -49,13 +48,13 @@ namespace Testing
             }
         }
 
-        public void Connect(string clientIp)
+        public override void Connect(string clientIp)
         {
             Log("Connected to ip: "+clientIp);
             isConnected = true;
         }
 
-        public void Close()
+        public override void Close()
         {
             Log("Closed");
             isConnected = false;
@@ -84,7 +83,7 @@ namespace Testing
             Log(topic + " speed: " + speed);
         }
 
-        public void Nudge(NudgeDir dir)
+        public override void Nudge(NudgeDir dir)
         {
             Log("nudging to the " + dir.ToString());
         }

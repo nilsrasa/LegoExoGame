@@ -7,7 +7,7 @@ using uPLibrary.Networking.M2Mqtt.Messages;
 
 namespace Mqtt
 {
-    public class MqttManager : MonoBehaviour
+    public class MqttManager : GameMqttClient
     {
         public string elbowValue, wristValue;
 
@@ -21,10 +21,8 @@ namespace Mqtt
 
         private MqttClient _client;
         public bool isConnected { get; private set; }
-        
-        public event System.Action<MqttEntry> OnElbowValue, OnWristValue;
 
-        public void Connect(string clientIp)
+        public override void Connect(string clientIp)
         {
             _client = new MqttClient(clientIp);
             byte code = _client.Connect("unity_program");
@@ -45,7 +43,7 @@ namespace Mqtt
             
         }
 
-        public void Close()
+        public override void Close()
         {
             //FIxme: nullreference??
             _client.MqttMsgPublished -= client_MqttMsgPublished;
@@ -92,7 +90,7 @@ namespace Mqtt
             PublishMessage(speed.ToString(), topic);
         }*/
 
-        public void Nudge(NudgeDir dir)
+        public override void Nudge(NudgeDir dir)
         {
             PublishMessage(_nudgeTopic, dir.ToString());
         }
@@ -121,13 +119,5 @@ namespace Mqtt
         {
             Close();
         }
-    }
-
-    public enum NudgeDir
-    {
-        up,
-        down,
-        left,
-        right
     }
 }

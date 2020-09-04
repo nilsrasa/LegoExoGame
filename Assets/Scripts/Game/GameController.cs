@@ -14,9 +14,12 @@ namespace Game
         [SerializeField] private GameUI _gameUI;
         //ObjectMan
         [SerializeField] private ObjectManager _objectManager;
-        
+
         //MqttMan
-        [SerializeField] private DebugMqttMan _mqttManager;
+        public bool useDebug = false;
+        public DebugMqttMan debugMqttClient;
+        public MqttManager mqttClient;
+        private GameMqttClient _mqttManager;
         private float _elbowAngle, _wristAngle;
 
         //Game
@@ -50,10 +53,10 @@ namespace Game
         {
             //Instantiating the GameSettings
             gameSettings = new GameSettings();
-
+            
             //Subscribing to the mqtt events
-            _mqttManager.OnElbowValue += OnElbowValue;
-            _mqttManager.OnWristValue += OnWristValue;
+            GameMqttClient.OnElbowValue += OnElbowValue;
+            GameMqttClient.OnWristValue += OnWristValue;
 
             //Sub to calibration controller event
             _calibrationController.OnCalibrationDone += OnCalibrationDone;
@@ -135,6 +138,7 @@ namespace Game
             _logWriter = new LogWriter(Application.persistentDataPath + "\\Logs\\" + System.DateTime.Now.ToString("dd-MM-yyyy HH'h'mm'm'ss's'") + "\\");
 
             //Init MqttManager
+            _mqttManager = useDebug ? debugMqttClient : mqttClient as GameMqttClient;
             _mqttManager.Connect(gameSettings.ClientIp);
 
             //Init calibration

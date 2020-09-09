@@ -869,8 +869,8 @@ MonoBehaviour:
   _gameUI: {fileID: 2050858040}
   _objectManager: {fileID: 1255838026}
   useDebug: 0
-  debugMqttClient: {fileID: 0}
-  mqttClient: {fileID: 0}
+  debugMqttClient: {fileID: 225650084}
+  mqttClient: {fileID: 278721652}
   _hand: {fileID: 1521622263}
   _nudgeTrigger: {fileID: 611125019}
   _grid: {fileID: 1216438803}

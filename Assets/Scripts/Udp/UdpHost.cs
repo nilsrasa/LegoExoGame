@@ -50,13 +50,17 @@ namespace Udp
             var data = message.Split(',');
             var unitytime = DateTime.Now.ToString("HH:mm:ss.ffffff");
             
-            if (float.TryParse(data[0], out _elbowValue)){
-                OnElbowValue?.Invoke(new UdpEntry(ELBOW_ID, _elbowValue, data[2], unitytime));
-            }
-
-            if (float.TryParse(data[1], out _wristValue))
+            if (data.Length == 3)
             {
-                OnWristValue?.Invoke(new UdpEntry(WRIST_ID, _wristValue, data[2], unitytime));
+                if (float.TryParse(data[0], out _elbowValue))
+                {
+                    OnElbowValue?.Invoke(new UdpEntry(ELBOW_ID, _elbowValue, data[2], unitytime));
+                }
+
+                if (float.TryParse(data[1], out _wristValue))
+                {
+                    OnWristValue?.Invoke(new UdpEntry(WRIST_ID, _wristValue, data[2], unitytime));
+                }
             }
         }
 

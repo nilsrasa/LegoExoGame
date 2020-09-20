@@ -22,7 +22,7 @@ namespace Udp
         private Thread _socketThread = null;
         private string _nudgeMsg = "";
 
-        public void Connect()
+        public void Connect(string clientIp)
         {
             _socketThread = new Thread(ExecuteServer);
             _socketThread.IsBackground = true;

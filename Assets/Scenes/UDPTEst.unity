@@ -278,8 +278,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5eacc1c35b4e06b459de2688b33dbaae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _port: 5013
+  _serverPort: 5013
   _ip: 127.0.0.1
+  _elbowValue: 0
+  _wristValue: 0
 --- !u!4 &630589192
 Transform:
   m_ObjectHideFlags: 0

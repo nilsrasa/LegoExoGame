@@ -1,6 +1,7 @@
 ﻿using LogModule;
 using Mqtt;
 using Testing;
+using Udp;
 using UnityEngine;
 
 namespace Game
@@ -16,10 +17,7 @@ namespace Game
         [SerializeField] private ObjectManager _objectManager;
 
         //MqttMan
-        public bool useDebug = false;
-        public DebugMqttMan debugMqttClient;
-        public MqttManager mqttClient;
-        private GameMqttClient _mqttManager;
+        [SerializeField] private UdpHost _udpHost;
         private float _elbowAngle, _wristAngle;
 
         //Game
@@ -55,8 +53,8 @@ namespace Game
             gameSettings = new GameSettings();
             
             //Subscribing to the mqtt events
-            GameMqttClient.OnElbowValue += OnElbowValue;
-            GameMqttClient.OnWristValue += OnWristValue;
+            UdpHost.OnElbowValue += OnElbowValue;
+            UdpHost.OnWristValue += OnWristValue;
 
             //Sub to calibration controller event
             _calibrationController.OnCalibrationDone += OnCalibrationDone;
@@ -138,11 +136,10 @@ namespace Game
             _logWriter = new LogWriter(Application.persistentDataPath + "\\Logs\\" + System.DateTime.Now.ToString("dd-MM-yyyy HH'h'mm'm'ss's'") + "\\");
 
             //Init MqttManager
-            _mqttManager = useDebug ? debugMqttClient : mqttClient as GameMqttClient;
-            _mqttManager.Connect(gameSettings.ClientIp);
+            _udpHost.Connect(gameSettings.ClientIp);
 
             //Init calibration
-            _calibrationController.StartCalibration(_mqttManager);
+            _calibrationController.StartCalibration(_udpHost);
 
 
             //Apply game settings
@@ -239,7 +236,7 @@ namespace Game
         public void StopGame()
         {
             IsRunning = false;
-            _mqttManager.Close();
+            _udpHost.Close();
             _logWriter.Close();
         }
 
@@ -342,20 +339,20 @@ namespace Game
             {
                 //if the cube is on the right
                 if(cubeH > _distanceFromMiddle)
-                    _mqttManager.Nudge(NudgeDir.right);
+                    _udpHost.Nudge(NudgeDir.right);
                 //if the cube is on the left
                 else
-                    _mqttManager.Nudge(NudgeDir.left);
+                    _udpHost.Nudge(NudgeDir.left);
             }
             //If the distance is over the threshold
             if (distV > triggerDist)
             {
                 //if the cube is on the top
                 if(cubeV > _distanceFromMiddle)
-                    _mqttManager.Nudge(NudgeDir.up);
+                    _udpHost.Nudge(NudgeDir.up);
                 //if the cube is on the bottom
                 else
-                    _mqttManager.Nudge(NudgeDir.down);
+                    _udpHost.Nudge(NudgeDir.down);
             }
 
             Debug.Log("Nudge was determined from distH:" + distH + " distV:" + distV + " cubeDir:" + cube.Direction.ToString());
@@ -380,7 +377,7 @@ namespace Game
         #endregion
 
         #region Mqtt
-        private void OnElbowValue(MqttEntry entry)
+        private void OnElbowValue(UdpEntry entry)
         {
             //Save value
             _elbowAngle = entry.Value;
@@ -389,7 +386,7 @@ namespace Game
             _logWriter.LogEntry(entry);
         }
 
-        private void OnWristValue(MqttEntry entry)
+        private void OnWristValue(UdpEntry entry)
         {
             //Save value
             _wristAngle = entry.Value;

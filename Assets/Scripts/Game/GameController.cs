@@ -91,11 +91,17 @@ namespace Game
                 _nudgeTrigger.transform.localPosition = nudgerPosition;
 
                 //Move the ball(_hand) according to exo angles
-                var pct = _calibration.ElbowPercent(_elbowAngle);
                 var pos = _hand.position;
-                pos.y = _distanceFromMiddle * pct;
+
+                var pct = _calibration.ElbowPercent(_elbowAngle);
+                var newY = _distanceFromMiddle * pct;
+                //Ignore any NaN values
+                pos.y = float.IsNaN(newY) ? pos.y : newY;
+
                 pct = _calibration.WristPercent(_wristAngle);
-                pos.x = _distanceFromMiddle * pct;
+                var newX = _distanceFromMiddle * pct;
+                //Ignore any NaN values
+                pos.x = float.IsNaN(newX) ? pos.x : newX;
 
                 _hand.position = pos;
 

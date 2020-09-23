@@ -52,12 +52,12 @@ namespace Udp
             
             if (data.Length == 3)
             {
-                if (float.TryParse(data[0], out _elbowValue))
+                if (float.TryParse(data[0], NumberStyles.Any, CultureInfo.InvariantCulture, out _elbowValue))
                 {
                     OnElbowValue?.Invoke(new UdpEntry(ELBOW_ID, _elbowValue, data[2], unitytime));
                 }
 
-                if (float.TryParse(data[1], out _wristValue))
+                if (float.TryParse(data[1], NumberStyles.Any, CultureInfo.InvariantCulture, out _wristValue))
                 {
                     OnWristValue?.Invoke(new UdpEntry(WRIST_ID, _wristValue, data[2], unitytime));
                 }

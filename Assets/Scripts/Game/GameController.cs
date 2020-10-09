@@ -142,7 +142,7 @@ namespace Game
             _logWriter = new LogWriter(Application.persistentDataPath + "\\Logs\\" + System.DateTime.Now.ToString("dd-MM-yyyy HH'h'mm'm'ss's'") + "\\");
 
             //Init MqttManager
-            _udpHost.Connect(gameSettings.ClientIp);
+            _udpHost.Connect(gameSettings.ClientIp, gameSettings.ClientPort);
 
             //Init calibration
             _calibrationController.StartCalibration(_udpHost);
@@ -330,6 +330,9 @@ namespace Game
         /// <param name="cube"></param>
         private void OnNudgeTrigger(Cube cube)
         {
+            if (gameSettings.SafeMode)
+                return;
+
             //Getting the ball x and y coordinates on grid where 0 is left down corner
             var hor = _hand.position.x + _distanceFromMiddle;
             var ver = _hand.position.y + _distanceFromMiddle;

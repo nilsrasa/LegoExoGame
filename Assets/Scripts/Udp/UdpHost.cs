@@ -19,13 +19,17 @@ namespace Udp
         [SerializeField] private string _ip = "127.0.0.1";
         [SerializeField] private float _elbowValue, _wristValue;
         private const string ELBOW_ID = "elbow", WRIST_ID = "wrist";
+        private Int32 _clientPort;
+        private string _clientIp;
         private Thread _socketThread = null;
         private bool _connected;
         private EndPoint _client;
         private Socket _socket;
 
-        public void Connect(string clientIp)
+        public void Connect(string ip, Int32 port)
         {
+            _clientIp = ip;
+            _clientPort = port;
             _socketThread = new Thread(ExecuteServer);
             _socketThread.IsBackground = true;
             _socketThread.Start();
@@ -77,25 +81,27 @@ namespace Udp
             byte[] data = new byte[1024];
             IPEndPoint ipep = new IPEndPoint(IPAddress.Any, _serverPort);
 
-            Socket newsock = new Socket(AddressFamily.InterNetwork,
+            _socket = new Socket(AddressFamily.InterNetwork,
                             SocketType.Dgram, ProtocolType.Udp);
 
-            newsock.Bind(ipep);
+            _socket.Bind(ipep);
             Debug.Log("Waiting for a client...");
 
-            IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
+            IPEndPoint sender = new IPEndPoint(IPAddress.Parse(_clientIp), _clientPort);
             _client = (EndPoint)(sender);
 
             //string welcome = "Welcome to my test server";
             data = Encoding.UTF8.GetBytes($"\"{DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss.ffffff", CultureInfo.InvariantCulture)}\"");
-            newsock.SendTo(data, data.Length, SocketFlags.None, _client);
+            _socket.SendTo(data, data.Length, SocketFlags.None, _client);
+
+            //TODO: catch error if client is nonexistent and handle it!!!
 
             _connected = true;
 
             while (true)
             {
                 data = new byte[1024];
-                recv = newsock.ReceiveFrom(data, ref _client);
+                recv = _socket.ReceiveFrom(data, ref _client);
 
                 MessageReceived(Encoding.ASCII.GetString(data, 0, recv));
             }

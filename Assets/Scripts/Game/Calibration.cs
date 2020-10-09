@@ -5,10 +5,19 @@
 public class Calibration
 {
     private float _maxY, _minY, _maxX, _minX;
+    private int _dirX, _dirY;
     private int setup;
     public void SetMaxWrist(float angle)
     {
         _maxX = angle;
+        _dirX = 1;
+        if (_minX > _maxX)
+        {
+            var min = _maxX;
+            _maxX = _minX;
+            _minX = min;
+            _dirX = -1;
+        }
         setup++;
     }
 
@@ -21,6 +30,14 @@ public class Calibration
     public void SetMaxElbow(float angle)
     {
         _maxY = angle;
+        _dirY = 1;
+        if (_minY > _maxY)
+        {
+            var min = _maxY;
+            _maxY = _minY;
+            _minY = min;
+            _dirY = -1;
+        }
         setup++;
     }
 
@@ -37,7 +54,7 @@ public class Calibration
     /// <returns>Percentage</returns>
     public float ElbowPercent (float angle)
     {
-        var percent = Percent(angle, _minY, _maxY);
+        var percent = Percent(angle, _minY, _maxY, _dirY);
         //var poly = Polynomial(percent);
 
         return percent;
@@ -50,7 +67,7 @@ public class Calibration
     /// <returns>Percentage</returns>
     public float WristPercent(float angle)
     {
-        var percent = Percent(angle, _minX, _maxX);
+        var percent = Percent(angle, _minX, _maxX, _dirX);
         //var poly = Polynomial(percent);
 
         return percent;
@@ -63,7 +80,7 @@ public class Calibration
     /// <param name="min">Min angle</param>
     /// <param name="max">Max angle</param>
     /// <returns>Percentage</returns>
-    private float Percent(float angle, float min, float max)
+    private float Percent(float angle, float min, float max, int dir)
     {
         angle = Mathf.Clamp(angle, min, max);
         var middle = (min + max) / 2f;
@@ -71,7 +88,7 @@ public class Calibration
         var dist = angle - middle;
         var pct = dist / range;
 
-        return pct;
+        return pct * dir;
     }
 
     private float Polynomial(float pct)

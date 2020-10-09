@@ -20,7 +20,9 @@ namespace Udp
         [SerializeField] private float _elbowValue, _wristValue;
         private const string ELBOW_ID = "elbow", WRIST_ID = "wrist";
         private Thread _socketThread = null;
-        private string _nudgeMsg = "";
+        private bool _connected;
+        private EndPoint _client;
+        private Socket _socket;
 
         public void Connect(string clientIp)
         {
@@ -41,8 +43,13 @@ namespace Udp
         }
         public void Nudge(NudgeDir dir)
         {
-            _nudgeMsg = dir.ToString();
-            Debug.Log("Nudging: " + _nudgeMsg);
+            if (_connected)
+            {
+                string msg = dir.ToString();
+
+                byte[] data = Encoding.ASCII.GetBytes(msg);
+                _socket.SendTo(data, data.Length, SocketFlags.None, _client);
+            }
         }
 
         private void MessageReceived(string message)
@@ -77,26 +84,20 @@ namespace Udp
             Debug.Log("Waiting for a client...");
 
             IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
-            EndPoint Remote = (EndPoint)(sender);
-
-            recv = newsock.ReceiveFrom(data, ref Remote);
-
-            Debug.Log("Message received from {0}:" + Remote.ToString());
-            Debug.Log(Encoding.ASCII.GetString(data, 0, recv));
+            _client = (EndPoint)(sender);
 
             //string welcome = "Welcome to my test server";
             data = Encoding.UTF8.GetBytes($"\"{DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss.ffffff", CultureInfo.InvariantCulture)}\"");
-            newsock.SendTo(data, data.Length, SocketFlags.None, Remote);
+            newsock.SendTo(data, data.Length, SocketFlags.None, _client);
+
+            _connected = true;
+
             while (true)
             {
                 data = new byte[1024];
-                recv = newsock.ReceiveFrom(data, ref Remote);
+                recv = newsock.ReceiveFrom(data, ref _client);
 
                 MessageReceived(Encoding.ASCII.GetString(data, 0, recv));
-
-                data = Encoding.ASCII.GetBytes(_nudgeMsg);
-                newsock.SendTo(data, data.Length, SocketFlags.None, Remote);
-                _nudgeMsg = ""; //Clear the nudgemsg after it's sent.
             }
         }
 

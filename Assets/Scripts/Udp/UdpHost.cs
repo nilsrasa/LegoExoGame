@@ -109,7 +109,7 @@ namespace Udp
 
         void OnApplicationQuit()
         {
-            Close();
+            //Close();
 
         }
     }

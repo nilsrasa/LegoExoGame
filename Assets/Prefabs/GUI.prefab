@@ -2252,7 +2252,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4734994817468274730}
-  m_RootOrder: 2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -2945,7 +2945,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4734994817468274730}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -3536,7 +3536,7 @@ RectTransform:
   - {fileID: 4814825007916204103}
   - {fileID: 5265712825253372156}
   m_Father: {fileID: 4734994817468274730}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0.254}
@@ -3697,15 +3697,15 @@ MonoBehaviour:
   m_VerticalScrollbar: {fileID: 0}
   m_VerticalScrollbarEventHandler: {fileID: 0}
   m_ScrollSensitivity: 1
-  m_ContentType: 3
+  m_ContentType: 9
   m_InputType: 0
   m_AsteriskChar: 42
   m_KeyboardType: 2
   m_LineType: 0
   m_HideMobileInput: 0
   m_HideSoftKeyboard: 0
-  m_CharacterValidation: 3
-  m_RegexValue: 
+  m_CharacterValidation: 0
+  m_RegexValue: \b(?:\d{1,3}\.){3}\d{1,3}\b
   m_GlobalPointSize: 14
   m_CharacterLimit: 0
   m_OnEndEdit:
@@ -3781,7 +3781,7 @@ RectTransform:
   - {fileID: 5512231032297349596}
   - {fileID: 1770072959060884612}
   m_Father: {fileID: 4734994817468274730}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -5299,11 +5299,11 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 3354076639258063030}
   - {fileID: 5092247397068954421}
   - {fileID: 6373651428130039655}
-  - {fileID: 3354076639258063030}
-  - {fileID: 3178623128729738501}
   - {fileID: 6486386013266164392}
+  - {fileID: 3178623128729738501}
   - {fileID: 2785616253572266403}
   - {fileID: 7417170950237595833}
   m_Father: {fileID: 1015947335982049439}
@@ -5731,7 +5731,7 @@ RectTransform:
   - {fileID: 8576183518601691615}
   - {fileID: 559371242318566242}
   m_Father: {fileID: 4734994817468274730}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}

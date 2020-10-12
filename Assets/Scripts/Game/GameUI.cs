@@ -88,7 +88,7 @@ namespace Game
             _resetBtn.onClick.AddListener(ResetSettings);
             _saveBtn.onClick.AddListener(SaveSettings);
 
-            _safeModeToggle.onValueChanged.AddListener(GameController.gameSettings.SetSafeMode);
+            _safeModeToggle.onValueChanged.AddListener((bool b) => GameController.gameSettings.SetSafeMode(b));
 
             //Binding settings UI elelments
             _clientIpInput.onEndEdit.AddListener(OnClientIpChanged);

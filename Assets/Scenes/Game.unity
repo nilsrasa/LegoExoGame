@@ -242,7 +242,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _serverPort: 5013
-  _ip: 127.0.0.1
+  _serverIp: 127.0.0.1
   _elbowValue: 0
   _wristValue: 0
 --- !u!4 &172893923

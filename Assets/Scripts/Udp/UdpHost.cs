@@ -16,7 +16,7 @@ namespace Udp
         public static System.Action<UdpEntry> OnElbowValue, OnWristValue;
 
         [SerializeField] private Int32 _serverPort = 5013;
-        [SerializeField] private string _ip = "127.0.0.1";
+        [SerializeField] private string _serverIp = "127.0.0.1";
         [SerializeField] private float _elbowValue, _wristValue;
         private const string ELBOW_ID = "elbow", WRIST_ID = "wrist";
         private Int32 _clientPort;
@@ -79,7 +79,7 @@ namespace Udp
         {
             int recv;
             byte[] data = new byte[1024];
-            IPEndPoint ipep = new IPEndPoint(IPAddress.Any, _serverPort);
+            IPEndPoint ipep = new IPEndPoint(IPAddress.Parse(_serverIp), _serverPort);
 
             _socket = new Socket(AddressFamily.InterNetwork,
                             SocketType.Dgram, ProtocolType.Udp);

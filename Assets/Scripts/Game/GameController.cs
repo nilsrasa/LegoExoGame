@@ -1,6 +1,7 @@
 ﻿using LogModule;
 using Mqtt;
 using Testing;
+using Udp;
 using UnityEngine;
 
 namespace Game
@@ -16,10 +17,7 @@ namespace Game
         [SerializeField] private ObjectManager _objectManager;
 
         //MqttMan
-        public bool useDebug = false;
-        public DebugMqttMan debugMqttClient;
-        public MqttManager mqttClient;
-        private GameMqttClient _mqttManager;
+        [SerializeField] private UdpHost _udpHost;
         private float _elbowAngle, _wristAngle;
 
         //Game
@@ -55,8 +53,8 @@ namespace Game
             gameSettings = new GameSettings();
             
             //Subscribing to the mqtt events
-            GameMqttClient.OnElbowValue += OnElbowValue;
-            GameMqttClient.OnWristValue += OnWristValue;
+            UdpHost.OnElbowValue += OnElbowValue;
+            UdpHost.OnWristValue += OnWristValue;
 
             //Sub to calibration controller event
             _calibrationController.OnCalibrationDone += OnCalibrationDone;
@@ -93,11 +91,17 @@ namespace Game
                 _nudgeTrigger.transform.localPosition = nudgerPosition;
 
                 //Move the ball(_hand) according to exo angles
-                var pct = _calibration.ElbowPercent(_elbowAngle);
                 var pos = _hand.position;
-                pos.y = _distanceFromMiddle * pct;
+
+                var pct = _calibration.ElbowPercent(_elbowAngle);
+                var newY = _distanceFromMiddle * pct;
+                //Ignore any NaN values
+                pos.y = float.IsNaN(newY) ? pos.y : newY;
+
                 pct = _calibration.WristPercent(_wristAngle);
-                pos.x = _distanceFromMiddle * pct;
+                var newX = _distanceFromMiddle * pct;
+                //Ignore any NaN values
+                pos.x = float.IsNaN(newX) ? pos.x : newX;
 
                 _hand.position = pos;
 
@@ -138,11 +142,10 @@ namespace Game
             _logWriter = new LogWriter(Application.persistentDataPath + "\\Logs\\" + System.DateTime.Now.ToString("dd-MM-yyyy HH'h'mm'm'ss's'") + "\\");
 
             //Init MqttManager
-            _mqttManager = useDebug ? debugMqttClient : mqttClient as GameMqttClient;
-            _mqttManager.Connect(gameSettings.ClientIp);
+            _udpHost.Connect(gameSettings.ClientIp, gameSettings.ClientPort);
 
             //Init calibration
-            _calibrationController.StartCalibration(_mqttManager);
+            _calibrationController.StartCalibration(_udpHost);
 
 
             //Apply game settings
@@ -239,7 +242,7 @@ namespace Game
         public void StopGame()
         {
             IsRunning = false;
-            _mqttManager.Close();
+            _udpHost.Close();
             _logWriter.Close();
         }
 
@@ -327,6 +330,9 @@ namespace Game
         /// <param name="cube"></param>
         private void OnNudgeTrigger(Cube cube)
         {
+            if (gameSettings.SafeMode)
+                return;
+
             //Getting the ball x and y coordinates on grid where 0 is left down corner
             var hor = _hand.position.x + _distanceFromMiddle;
             var ver = _hand.position.y + _distanceFromMiddle;
@@ -342,20 +348,20 @@ namespace Game
             {
                 //if the cube is on the right
                 if(cubeH > _distanceFromMiddle)
-                    _mqttManager.Nudge(NudgeDir.right);
+                    _udpHost.Nudge(NudgeDir.right);
                 //if the cube is on the left
                 else
-                    _mqttManager.Nudge(NudgeDir.left);
+                    _udpHost.Nudge(NudgeDir.left);
             }
             //If the distance is over the threshold
             if (distV > triggerDist)
             {
                 //if the cube is on the top
                 if(cubeV > _distanceFromMiddle)
-                    _mqttManager.Nudge(NudgeDir.up);
+                    _udpHost.Nudge(NudgeDir.up);
                 //if the cube is on the bottom
                 else
-                    _mqttManager.Nudge(NudgeDir.down);
+                    _udpHost.Nudge(NudgeDir.down);
             }
 
             Debug.Log("Nudge was determined from distH:" + distH + " distV:" + distV + " cubeDir:" + cube.Direction.ToString());
@@ -380,7 +386,7 @@ namespace Game
         #endregion
 
         #region Mqtt
-        private void OnElbowValue(MqttEntry entry)
+        private void OnElbowValue(UdpEntry entry)
         {
             //Save value
             _elbowAngle = entry.Value;
@@ -389,7 +395,7 @@ namespace Game
             _logWriter.LogEntry(entry);
         }
 
-        private void OnWristValue(MqttEntry entry)
+        private void OnWristValue(UdpEntry entry)
         {
             //Save value
             _wristAngle = entry.Value;

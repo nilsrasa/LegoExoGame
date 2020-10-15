@@ -3,23 +3,24 @@ using Mqtt;
 using System.Collections;
 using System.Collections.Generic;
 using Testing;
+using Udp;
 using UnityEngine;
 
 public class CalibrationController : MonoBehaviour
 {
     private Calibration _calibration;
-    private GameMqttClient _mqttManager;
+    private UdpHost _udpHost;
     private float _elbowAngle;
     private float _wristAngle;
 
     public event System.Action<Calibration> OnCalibrationDone;
 
-    public void StartCalibration(GameMqttClient mqttManager)
+    public void StartCalibration(UdpHost udpHost)
     {
         //Subscribing to the mqttManager events
-        _mqttManager = mqttManager;
-        GameMqttClient.OnElbowValue += OnElbowValue;
-        GameMqttClient.OnWristValue += OnWristValue;
+        _udpHost = udpHost;
+        UdpHost.OnElbowValue += OnElbowValue;
+        UdpHost.OnWristValue += OnWristValue;
 
         //Instantiating a new Calibration object
         _calibration = new Calibration();
@@ -48,13 +49,13 @@ public class CalibrationController : MonoBehaviour
         OnCalibrationDone?.Invoke(_calibration);
     }
 
-    #region MQTT
-    private void OnElbowValue(MqttEntry entry)
+    #region UDP
+    private void OnElbowValue(UdpEntry entry)
     {
         _elbowAngle = entry.Value;
     }
 
-    private void OnWristValue(MqttEntry entry)
+    private void OnWristValue(UdpEntry entry)
     {
         _wristAngle = entry.Value;
     }

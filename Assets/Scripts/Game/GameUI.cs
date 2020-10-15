@@ -29,8 +29,9 @@ namespace Game
         [Header("Settings Menu Panel")]
         [SerializeField] private RectTransform _settingsPanel;
         [SerializeField] private Button _resetBtn, _saveBtn;
-        [SerializeField] private TMP_InputField _clientIpInput;
+        [SerializeField] private TMP_InputField _clientIpInput, _clientPortInput;
         [SerializeField] private TMP_Dropdown _gameDifDrop;
+        [SerializeField] private Toggle _safeModeToggle;
         [Header("Pause Panel")]
         [SerializeField] private RectTransform _pausePanel;
         [Header("Count Panel")]
@@ -87,8 +88,11 @@ namespace Game
             _resetBtn.onClick.AddListener(ResetSettings);
             _saveBtn.onClick.AddListener(SaveSettings);
 
+            _safeModeToggle.onValueChanged.AddListener((bool b) => GameController.gameSettings.SetSafeMode(b));
+
             //Binding settings UI elelments
-            _clientIpInput.onEndEdit.AddListener(OnClientInputChanged);
+            _clientIpInput.onEndEdit.AddListener(OnClientIpChanged);
+            _clientPortInput.onEndEdit.AddListener(OnClientPortChanged);
             _gameDifDrop.onValueChanged.AddListener(OnDifDropChanged);
         }
 
@@ -194,6 +198,8 @@ namespace Game
         public void ApplySettings(GameSettings settings)
         {
             _clientIpInput.text = settings.ClientIp;
+            _clientPortInput.text = settings.ClientPort.ToString();
+            _safeModeToggle.isOn = settings.SafeMode;
             _gameDifDrop.value = (int)settings.GameDif;
             //_gameDifDrop.RefreshShownValue();
         }
@@ -210,9 +216,14 @@ namespace Game
             UpdateUI();
         }
 
-        private void OnClientInputChanged(string input)
+        private void OnClientIpChanged(string input)
         {
             GameController.gameSettings.SetClientIp(input);
+        }
+
+        private void OnClientPortChanged(string port)
+        {
+            GameController.gameSettings.SetClientPort(port);
         }
 
         private void OnDifDropChanged(int val)

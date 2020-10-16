@@ -124,6 +124,11 @@ namespace Game
                     }
                 }
             }
+
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                Application.Quit();
+            }
         }
 
         private void OnDestroy()

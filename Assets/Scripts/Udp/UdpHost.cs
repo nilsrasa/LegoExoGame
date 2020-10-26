@@ -48,9 +48,9 @@ namespace Udp
         public virtual void Close()
         {
             _connected = false;
-            _socket.Close();
-            _socketThread.Interrupt();
-            _socketThread.Join();
+            _socket?.Close();
+            _socketThread?.Interrupt();
+            _socketThread?.Join();
         }
 
         #region Settings

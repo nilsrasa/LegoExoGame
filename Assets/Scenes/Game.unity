@@ -238,11 +238,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 172893921}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5eacc1c35b4e06b459de2688b33dbaae, type: 3}
+  m_Script: {fileID: 11500000, guid: ee9381d3f09e8a14baad2560fc60d8ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _serverPort: 5013
-  _serverIp: 192.168.0.20
+  _hostPort: 5013
+  _hostIp: 127.0.0.1
+  _clientPort: 5011
+  _clientIp: 127.0.0.1
+  _autoConnect: 0
+  _message: 
   _elbowValue: 0
   _wristValue: 0
 --- !u!4 &172893923

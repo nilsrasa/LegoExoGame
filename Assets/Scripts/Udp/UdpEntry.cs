@@ -43,7 +43,7 @@ namespace Udp
 
         public override string ToText()
         {
-            return $"Value: {Value}, Mqtt TimeStamp: {UdpTimestamp}, Unity Timestamp: {UnityTimestamp}";
+            return $"Value: {Value}, UDP TimeStamp: {UdpTimestamp}, Unity Timestamp: {UnityTimestamp}";
         }
     }
 }

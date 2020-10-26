@@ -1,7 +1,4 @@
-﻿using Game;
-using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using System.Globalization;
 using System.Net;
 using System.Net.Sockets;
@@ -13,73 +10,98 @@ namespace Udp
 {
     public class UdpHost : MonoBehaviour
     {
-        public static System.Action<UdpEntry> OnElbowValue, OnWristValue;
+        public static Action<string> OnReceiveMsg;
 
-        [SerializeField] private Int32 _serverPort = 5013;
-        [SerializeField] private string _serverIp = "127.0.0.1";
-        [SerializeField] private float _elbowValue, _wristValue;
-        private const string ELBOW_ID = "elbow", WRIST_ID = "wrist";
-        private Int32 _clientPort;
-        private string _clientIp;
-        private Thread _socketThread = null;
-        private bool _connected;
-        private EndPoint _client;
-        private Socket _socket;
+        [Header("Host settings")]
+        [SerializeField] protected Int32 _hostPort = 5013;
+        [SerializeField] protected string _hostIp = "127.0.0.1";
+        [Header("Client settings")]
+        [SerializeField] protected Int32 _clientPort = 5011;
+        [SerializeField] protected string _clientIp = "127.0.0.1";
+        [SerializeField, Tooltip("Set true if host should auto start and connect to the client")]
+        protected bool _autoConnect = false;
+        [Header("Stream")]
+        [SerializeField] protected string _message;
+        protected Thread _socketThread = null;
+        protected bool _connected;
+        protected EndPoint _client;
+        protected Socket _socket;
 
-        public void Connect(string ip, Int32 port)
+        public virtual void Start()
         {
-            _clientIp = ip;
-            _clientPort = port;
-            _socketThread = new Thread(ExecuteServer);
+           if (_autoConnect) Connect();
+        }
+
+        /// <summary>
+        /// Opens a connection to the set client
+        /// </summary>
+        public virtual void Connect()
+        {
+            _socketThread = new Thread(ExecuteHost);
             _socketThread.IsBackground = true;
             _socketThread.Start();
         }
 
-        public void Close()
+        /// <summary>
+        /// Closes the connection
+        /// </summary>
+        public virtual void Close()
         {
-            _socketThread.Abort();
+            _connected = false;
+            _socket.Close();
+            _socketThread.Interrupt();
+            _socketThread.Join();
         }
 
-
-        public void Nudge(int i)
+        #region Settings
+        public virtual void SetClient(string clientIp, Int32 clientPort)
         {
-            Nudge((NudgeDir)i);
+            //TODO: check if Ip is valid?
+            _clientIp = clientIp;
+            _clientPort = clientPort;
         }
-        public void Nudge(NudgeDir dir)
+
+        public virtual void SetHost(string hostIp, Int32 hostPort)
+        {
+            _hostIp = hostIp;
+            _hostPort = hostPort;
+        }
+
+        #endregion
+
+        #region Comms
+        /// <summary>
+        /// Send a message to the client
+        /// </summary>
+        /// <param name="msg"></param>
+        public virtual void SendMsg(string msg)
         {
             if (_connected)
             {
-                string msg = dir.ToString();
-
                 byte[] data = Encoding.ASCII.GetBytes(msg);
                 _socket.SendTo(data, data.Length, SocketFlags.None, _client);
             }
         }
 
-        private void MessageReceived(string message)
+        /// <summary>
+        /// Called when a message is received
+        /// </summary>
+        /// <param name="message">string msg</param>
+        public virtual void MessageReceived(string message)
         {
-            var data = message.Split(',');
-            var unitytime = DateTime.Now.ToString("HH:mm:ss.ffffff");
-            
-            if (data.Length == 3)
-            {
-                if (float.TryParse(data[0], NumberStyles.Any, CultureInfo.InvariantCulture, out _elbowValue))
-                {
-                    OnElbowValue?.Invoke(new UdpEntry(ELBOW_ID, _elbowValue, data[2], unitytime));
-                }
+            _message = message;
 
-                if (float.TryParse(data[1], NumberStyles.Any, CultureInfo.InvariantCulture, out _wristValue))
-                {
-                    OnWristValue?.Invoke(new UdpEntry(WRIST_ID, _wristValue, data[2], unitytime));
-                }
-            }
+            OnReceiveMsg?.Invoke(message);
         }
 
-        private void ExecuteServer()
+        /// <summary>
+        /// Starts the host and runs a loop waiting for messages.
+        /// </summary>
+        protected void ExecuteHost()
         {
             int recv;
             byte[] data = new byte[1024];
-            IPEndPoint ipep = new IPEndPoint(IPAddress.Parse(_serverIp), _serverPort);
+            IPEndPoint ipep = new IPEndPoint(IPAddress.Parse(_hostIp), _hostPort);
 
             _socket = new Socket(AddressFamily.InterNetwork,
                             SocketType.Dgram, ProtocolType.Udp);
@@ -90,7 +112,7 @@ namespace Udp
             IPEndPoint sender = new IPEndPoint(IPAddress.Parse(_clientIp), _clientPort);
             _client = (EndPoint)(sender);
 
-            //string welcome = "Welcome to my test server";
+            //string welcome = "Welcome to my test host";
             data = Encoding.UTF8.GetBytes($"\"{DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss.ffffff", CultureInfo.InvariantCulture)}\"");
             _socket.SendTo(data, data.Length, SocketFlags.None, _client);
 
@@ -106,8 +128,9 @@ namespace Udp
                 MessageReceived(Encoding.ASCII.GetString(data, 0, recv));
             }
         }
+        #endregion
 
-        void OnApplicationQuit()
+        public virtual void OnApplicationQuit()
         {
             //Close();
 

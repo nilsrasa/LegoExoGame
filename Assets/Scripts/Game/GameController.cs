@@ -17,7 +17,7 @@ namespace Game
         [SerializeField] private ObjectManager _objectManager;
 
         //MqttMan
-        [SerializeField] private UdpHost _udpHost;
+        [SerializeField] private ExoUdpHost _udpHost;
         private float _elbowAngle, _wristAngle;
 
         //Game
@@ -52,9 +52,9 @@ namespace Game
             //Instantiating the GameSettings
             gameSettings = new GameSettings();
             
-            //Subscribing to the mqtt events
-            UdpHost.OnElbowValue += OnElbowValue;
-            UdpHost.OnWristValue += OnWristValue;
+            //Subscribing to the udp events
+            ExoUdpHost.OnElbowValue += OnElbowValue;
+            ExoUdpHost.OnWristValue += OnWristValue;
 
             //Sub to calibration controller event
             _calibrationController.OnCalibrationDone += OnCalibrationDone;
@@ -142,7 +142,8 @@ namespace Game
             _logWriter = new LogWriter(Application.persistentDataPath + "\\Logs\\" + System.DateTime.Now.ToString("dd-MM-yyyy HH'h'mm'm'ss's'") + "\\");
 
             //Init MqttManager
-            _udpHost.Connect(gameSettings.ClientIp, gameSettings.ClientPort);
+            _udpHost.SetClient(gameSettings.ClientIp, gameSettings.ClientPort);
+            _udpHost.Connect();
 
             //Init calibration
             _calibrationController.StartCalibration(_udpHost);

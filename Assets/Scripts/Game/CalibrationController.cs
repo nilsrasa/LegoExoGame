@@ -9,7 +9,6 @@ using UnityEngine;
 public class CalibrationController : MonoBehaviour
 {
     private Calibration _calibration;
-    private UdpHost _udpHost;
     private float _elbowAngle;
     private float _wristAngle;
 
@@ -18,9 +17,8 @@ public class CalibrationController : MonoBehaviour
     public void StartCalibration(UdpHost udpHost)
     {
         //Subscribing to the mqttManager events
-        _udpHost = udpHost;
-        UdpHost.OnElbowValue += OnElbowValue;
-        UdpHost.OnWristValue += OnWristValue;
+        ExoUdpHost.OnElbowValue += OnElbowValue;
+        ExoUdpHost.OnWristValue += OnWristValue;
 
         //Instantiating a new Calibration object
         _calibration = new Calibration();

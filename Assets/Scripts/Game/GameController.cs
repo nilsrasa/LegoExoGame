@@ -249,7 +249,7 @@ namespace Game
         {
             IsRunning = false;
             _udpHost.Close();
-            _logWriter.Close();
+            _logWriter?.Close();
         }
 
         /// <summary>

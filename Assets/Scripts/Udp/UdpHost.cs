@@ -10,7 +10,7 @@ namespace Udp
 {
     public class UdpHost : MonoBehaviour
     {
-        public static Action<string> OnReceiveMsg;
+        public static event Action<string> OnReceiveMsg;
 
         [Header("Host settings")]
         [SerializeField] protected Int32 _hostPort = 5013;
